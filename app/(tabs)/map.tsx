@@ -22,6 +22,7 @@ export default function MapScreen() {
     const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
     const [trackingBus, setTrackingBus] = useState<string | null>(null);
     const bottomSheetRef = useRef<BottomSheet>(null);
+    const [transitMode, setTransitMode] = useState<'fixed' | 'ride'>('fixed');
 
     // Bottom sheet snap points - initially hidden, then show when destination selected
     const snapPoints = useMemo(() => ['15%', '60%'], []);
@@ -295,31 +296,100 @@ export default function MapScreen() {
                     </View>
 
                     <BottomSheetScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
+
+
+                        {/* Destination summary */}
+                        {selectedDestination && (
+                            <View className='my-5'>
+                                <Text className="text-base font-semibold text-cnmi-gray-900">{selectedDestination}</Text>
+                                <View className='flex-row items-center mt-1'>
+                                    <Ionicons name="navigate" size={20} color="#6B7280" />
+                                    <Text className='text-cnmi-gray-500 ml-2'>Approx. distance shown on map</Text>
+                                </View>
+                            </View>
+                        )}
+                                        
                         {/* Route Options for Selected Destination */}
                         {selectedDestination && !trackingBus && (
                             <View className="mb-6">
-                                <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Choose your route</Text>
-                                {routeOptions.map((route) => (
+                                {/* Segmented Switcher */}
+                                <View className="flex-row rounded-full overflow-hidden border border-cnmi-primary mb-4">
                                     <TouchableOpacity
-                                        key={route.id}
-                                        onPress={() => handleRouteSelect(route.id)}
-                                        className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                        onPress={() => setTransitMode('fixed')}
+                                        className="flex-1"
+                                        accessibilityRole="button"
+                                        accessibilityState={{ selected: transitMode === 'fixed' }}
                                     >
-                                        <View className="flex-row items-center flex-1">
-                                            <View className="w-10 h-10 bg-cnmi-primary rounded-full items-center justify-center mr-3">
-                                                <Ionicons name="bus" size={20} color="white" />
-                                            </View>
-                                            <View className="flex-1">
-                                                <Text className="font-medium text-cnmi-gray-900">{route.route}</Text>
-                                                <Text className="text-sm text-cnmi-gray-600">{route.duration} journey</Text>
-                                            </View>
-                                        </View>
-                                        <View className="items-end">
-                                            <Text className="font-semibold text-cnmi-primary">{route.nextBus}</Text>
-                                            <Text className="text-xs text-cnmi-gray-500">Next bus</Text>
+                                        <View className={`${transitMode === 'fixed' ? 'bg-cnmi-primary' : 'bg-transparent'} py-3 items-center`}> 
+                                            <Text className={`${transitMode === 'fixed' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>Fixed Bus Route</Text>
                                         </View>
                                     </TouchableOpacity>
-                                ))}
+                                    <TouchableOpacity
+                                        onPress={() => setTransitMode('ride')}
+                                        className="flex-1"
+                                        accessibilityRole="button"
+                                        accessibilityState={{ selected: transitMode === 'ride' }}
+                                    >
+                                        <View className={`${transitMode === 'ride' ? 'bg-cnmi-primary' : 'bg-transparent'} py-3 items-center`}>
+                                            <Text className={`${transitMode === 'ride' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>Call-A-Ride</Text>
+                                        </View>
+                                    </TouchableOpacity>
+                                </View>
+
+                                {transitMode === 'fixed' && (
+                                    <View>
+                                        <Text className="text-lg font-bold text-cnmi-gray-900 mb-3">Choose your route</Text>
+                                        {routeOptions.map((route) => (
+                                            <TouchableOpacity
+                                                key={route.id}
+                                                onPress={() => handleRouteSelect(route.id)}
+                                                className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                            >
+                                                <View className="flex-row items-center flex-1">
+                                                    <View className="w-10 h-10 bg-cnmi-primary rounded-full items-center justify-center mr-3">
+                                                        <Ionicons name="bus" size={20} color="white" />
+                                                    </View>
+                                                    <View className="flex-1">
+                                                        <Text className="font-medium text-cnmi-gray-900">{route.route}</Text>
+                                                        <Text className="text-sm text-cnmi-gray-600">{route.duration} journey</Text>
+                                                    </View>
+                                                </View>
+                                                <View className="items-end">
+                                                    <Text className="font-semibold text-cnmi-primary">{route.nextBus}</Text>
+                                                    <Text className="text-xs text-cnmi-gray-500">Next bus</Text>
+                                                </View>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                )}
+
+                                {transitMode === 'ride' && (
+                                    <View>
+                                        <Text className="text-lg font-bold text-cnmi-gray-900 mb-3">Nearby drivers</Text>
+                                        {nearbyTaxis.map((taxi) => (
+                                            <TouchableOpacity
+                                                key={taxi.id}
+                                                className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                            >
+                                                <View className="flex-row items-center flex-1">
+                                                    <View className="w-10 h-10 bg-cnmi-secondary rounded-full items-center justify-center mr-3">
+                                                        <Ionicons name="car" size={20} color="white" />
+                                                    </View>
+                                                    <View className="flex-1">
+                                                        <Text className="font-medium text-cnmi-gray-900">{taxi.driver}</Text>
+                                                        <Text className="text-sm text-cnmi-gray-600">{taxi.price}</Text>
+                                                    </View>
+                                                </View>
+                                                <View className="items-end">
+                                                    <Text className="font-semibold text-cnmi-accent">{taxi.time}</Text>
+                                                    <TouchableOpacity className="bg-cnmi-accent px-3 py-1 rounded-full mt-1">
+                                                        <Text className="text-white text-xs font-medium">CALL</Text>
+                                                    </TouchableOpacity>
+                                                </View>
+                                            </TouchableOpacity>
+                                        ))}
+                                    </View>
+                                )}
                             </View>
                         )}
 
