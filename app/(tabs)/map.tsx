@@ -1,9 +1,10 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
     Dimensions,
+
     SafeAreaView,
     Text,
     TextInput,
@@ -23,9 +24,16 @@ export default function MapScreen() {
     const [trackingBus, setTrackingBus] = useState<string | null>(null);
     const bottomSheetRef = useRef<BottomSheet>(null);
     const [transitMode, setTransitMode] = useState<'fixed' | 'ride'>('fixed');
+    const [headerHeight, setHeaderHeight] = useState(0);
 
     // Bottom sheet snap points - initially hidden, then show when destination selected
-    const snapPoints = useMemo(() => ['15%', '60%'], []);
+
+    // Include a max pixel height so it stops before overlapping the header
+    const snapPoints = useMemo(() => {
+        const margin = 8; // small spacing between sheet and header
+        const maxHeight = Math.max(300, SCREEN_HEIGHT - headerHeight - margin);
+        return ['15%', '60%', maxHeight];
+    }, [headerHeight]);
 
     // Saipan coordinates
     const initialRegion = {
@@ -108,7 +116,7 @@ export default function MapScreen() {
         <GestureHandlerRootView className="flex-1">
             <SafeAreaView className="flex-1 bg-cnmi-gray-50">
                 {/* Header */}
-                <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200 z-10">
+                <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200 z-10" onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
                     <View className="flex-row items-center justify-between">
                         <View>
                             <Text className="text-lg font-semibold text-cnmi-gray-900">Transit CNMI</Text>
@@ -250,6 +258,7 @@ export default function MapScreen() {
                     index={-1}
                     snapPoints={snapPoints}
                     onChange={handleSheetChanges}
+                    topInset={headerHeight + 8}
                     backgroundStyle={{ backgroundColor: 'white' }}
                     handleIndicatorStyle={{ backgroundColor: '#D1D5DB' }}
                     enablePanDownToClose={false}
