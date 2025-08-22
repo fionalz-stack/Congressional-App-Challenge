@@ -1,11 +1,22 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 export default function RoutesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [showCheckInModal, setShowCheckInModal] = useState(false);
+
+  // Saipan coordinates for the map background
+  const initialRegion = {
+    latitude: 15.2137,
+    longitude: 145.7546,
+    latitudeDelta: 0.05,
+    longitudeDelta: 0.05,
+  };
 
   const routes = [
     {
@@ -54,16 +65,34 @@ export default function RoutesScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-gray-50">
-      {/* Header */}
-      <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200">
-        <Text className="text-xl font-bold text-cnmi-gray-900">Bus Routes</Text>
-        <Text className="text-sm text-cnmi-gray-600">Find your route across CNMI</Text>
+    <SafeAreaView className="flex-1">
+      {/* Google Maps Background */}
+      <View className="absolute inset-0 z-0" style={{ width: '100%', height: '100%' }}>
+        <MapView
+          provider={PROVIDER_GOOGLE}
+          style={{ flex: 1 }}
+          initialRegion={initialRegion}
+          showsUserLocation={false}
+          showsMyLocationButton={false}
+          showsCompass={false}
+          toolbarEnabled={false}
+          zoomEnabled={false}
+          rotateEnabled={false}
+          scrollEnabled={false}
+          pitchEnabled={false}
+          mapType="standard"
+        />
       </View>
 
+      {/* Header */}
+      <BlurView intensity={70} tint="light" className="px-4 py-3 border-b border-cnmi-gray-200 z-10">
+        <Text className="text-xl font-bold text-cnmi-gray-900">Bus Routes</Text>
+        <Text className="text-sm text-cnmi-gray-600">Find your route across CNMI</Text>
+      </BlurView>
+
       {/* Search Bar */}
-      <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200">
-        <View className="flex-row items-center bg-cnmi-gray-100 rounded-lg px-3 py-2">
+      <BlurView intensity={70} tint="light" className="px-4 py-3 border-b border-cnmi-gray-200 z-10">
+        <View className="flex-row items-center bg-white bg-opacity-80 rounded-lg px-3 py-2">
           <Ionicons name="search" size={20} color="#6B7280" />
           <TextInput
             value={searchQuery}
@@ -72,15 +101,15 @@ export default function RoutesScreen() {
             className="flex-1 ml-2 text-base"
           />
         </View>
-      </View>
+      </BlurView>
 
       {/* Category Filters */}
-      <ScrollView 
-        horizontal 
-        showsHorizontalScrollIndicator={false}
-        className="bg-white border-b border-cnmi-gray-200"
-        contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
-      >
+      <BlurView intensity={70} tint="light" className="border-b border-cnmi-gray-200 z-10">
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingVertical: 12 }}
+        >
         {categories.map((category) => (
           <TouchableOpacity
             key={category.id}
@@ -105,12 +134,14 @@ export default function RoutesScreen() {
             </Text>
           </TouchableOpacity>
         ))}
-      </ScrollView>
+        </ScrollView>
+      </BlurView>
 
       {/* Routes List */}
-      <ScrollView className="flex-1 px-4 py-4">
-        {routes.map((route) => (
-          <CNMICard key={route.id} variant="elevated" className="mb-4">
+      <BlurView intensity={70} tint="light" className="flex-1 z-10">
+        <ScrollView className="px-4 py-4">
+          {routes.map((route) => (
+            <CNMICard key={route.id} variant="elevated" className="mb-4">
             <View className="flex-row items-start">
               {/* Route Number */}
               <View 
@@ -162,14 +193,41 @@ export default function RoutesScreen() {
                 <Ionicons name="map" size={16} color="#6B46C1" />
                 <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
               </TouchableOpacity>
-              <TouchableOpacity className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg">
+              <TouchableOpacity 
+                className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg"
+                onPress={() => setShowCheckInModal(true)}
+              >
                 <Ionicons name="checkmark-circle" size={16} color="white" />
                 <Text className="text-white font-medium ml-2">Check In</Text>
               </TouchableOpacity>
             </View>
           </CNMICard>
         ))}
-      </ScrollView>
+        </ScrollView>
+      </BlurView>
+
+      {/* Check-in Confirmation Modal */}
+      <Modal
+        visible={showCheckInModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowCheckInModal(false)}
+      >
+        <BlurView intensity={80} tint="light" className="flex-1 justify-center items-center px-4 z-50">
+          <View className="bg-cnmi-primary rounded-3xl p-6 w-full max-w-sm">
+            <Text className="text-white text-2xl font-bold mb-2 text-center">Check-in confirmed!</Text>
+            <Text className="text-white text-lg mb-1 text-center">Your bus driver is on</Text>
+            <Text className="text-white text-lg mb-6 text-center">the way.</Text>
+            
+            <TouchableOpacity 
+              className="bg-purple-700 rounded-full py-3 px-8 self-center"
+              onPress={() => setShowCheckInModal(false)}
+            >
+              <Text className="text-white font-medium text-lg">Got It!</Text>
+            </TouchableOpacity>
+          </View>
+        </BlurView>
+      </Modal>
     </SafeAreaView>
   );
 }
