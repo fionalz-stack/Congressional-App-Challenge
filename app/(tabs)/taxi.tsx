@@ -1,0 +1,196 @@
+import { CNMIButton } from '@/components/ui/CNMIButton';
+import { CNMICard } from '@/components/ui/CNMICard';
+import { Ionicons } from '@expo/vector-icons';
+import React, { useState } from 'react';
+import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+
+export default function TaxiScreen() {
+  const [pickupLocation, setPickupLocation] = useState('');
+  const [destination, setDestination] = useState('');
+  const [selectedTaxi, setSelectedTaxi] = useState<string | null>(null);
+
+  const availableTaxis = [
+    {
+      id: '1',
+      driver: 'Ms. Cab',
+      rating: 4.8,
+      price: '$3.00',
+      estimatedTime: '3 min',
+      distance: '0.5 mi',
+      vehicle: 'Toyota Camry',
+      plateNumber: 'ABC-123'
+    },
+    {
+      id: '2', 
+      driver: 'Saipan Pickup',
+      rating: 4.6,
+      price: '$4.50',
+      estimatedTime: '5 min',
+      distance: '0.8 mi',
+      vehicle: 'Honda Civic',
+      plateNumber: 'XYZ-789'
+    },
+    {
+      id: '3',
+      driver: 'Staying Lit',
+      rating: 4.9,
+      price: '$3.75',
+      estimatedTime: '7 min',
+      distance: '1.2 mi',
+      vehicle: 'Nissan Altima',
+      plateNumber: 'DEF-456'
+    }
+  ];
+
+  const quickDestinations = [
+    { name: 'Saipan International Airport', icon: 'airplane' },
+    { name: 'Garapan Tourist District', icon: 'storefront' },
+    { name: 'American Memorial Park', icon: 'leaf' },
+    { name: 'DFS Galleria', icon: 'bag' },
+  ];
+
+  return (
+    <SafeAreaView className="flex-1 bg-cnmi-gray-50">
+      {/* Header */}
+      <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200">
+        <Text className="text-xl font-bold text-cnmi-gray-900">Call a Taxi</Text>
+        <Text className="text-sm text-cnmi-gray-600">Quick and reliable rides across CNMI</Text>
+      </View>
+
+      <ScrollView className="flex-1">
+        {/* Location Input */}
+        <CNMICard variant="elevated" className="m-4">
+          <View className="space-y-4">
+            <View>
+              <Text className="text-sm font-medium text-cnmi-gray-700 mb-2">Pickup Location</Text>
+              <View className="flex-row items-center bg-cnmi-gray-100 rounded-lg px-3 py-3">
+                <Ionicons name="location" size={20} color="#6B46C1" />
+                <TextInput
+                  value={pickupLocation}
+                  onChangeText={setPickupLocation}
+                  placeholder="Current location"
+                  className="flex-1 ml-2 text-base"
+                />
+                <TouchableOpacity>
+                  <Ionicons name="locate" size={20} color="#6B7280" />
+                </TouchableOpacity>
+              </View>
+            </View>
+
+            <View>
+              <Text className="text-sm font-medium text-cnmi-gray-700 mb-2">Destination</Text>
+              <View className="flex-row items-center bg-cnmi-gray-100 rounded-lg px-3 py-3">
+                <Ionicons name="flag" size={20} color="#F59E0B" />
+                <TextInput
+                  value={destination}
+                  onChangeText={setDestination}
+                  placeholder="Where to?"
+                  className="flex-1 ml-2 text-base"
+                />
+              </View>
+            </View>
+          </View>
+        </CNMICard>
+
+        {/* Quick Destinations */}
+        <View className="px-4 mb-4">
+          <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Popular Destinations</Text>
+          <View className="flex-row flex-wrap">
+            {quickDestinations.map((dest, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setDestination(dest.name)}
+                className="bg-white rounded-lg p-3 mr-3 mb-3 flex-row items-center shadow-sm"
+                style={{ minWidth: '45%' }}
+              >
+                <Ionicons name={dest.icon as any} size={20} color="#6B46C1" />
+                <Text className="text-sm text-cnmi-gray-700 ml-2 flex-1">{dest.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </View>
+
+        {/* Available Taxis */}
+        <View className="px-4">
+          <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Available Taxis</Text>
+          {availableTaxis.map((taxi) => (
+            <CNMICard 
+              key={taxi.id} 
+              variant={selectedTaxi === taxi.id ? "elevated" : "default"}
+              className={`mb-3 ${selectedTaxi === taxi.id ? 'border-2 border-cnmi-primary' : ''}`}
+            >
+              <TouchableOpacity onPress={() => setSelectedTaxi(taxi.id)}>
+                <View className="flex-row items-center">
+                  {/* Driver Avatar */}
+                  <View className="w-12 h-12 bg-cnmi-secondary rounded-full items-center justify-center mr-4">
+                    <Ionicons name="person" size={24} color="white" />
+                  </View>
+
+                  {/* Driver Info */}
+                  <View className="flex-1">
+                    <View className="flex-row items-center justify-between mb-1">
+                      <Text className="text-lg font-semibold text-cnmi-gray-900">
+                        {taxi.driver}
+                      </Text>
+                      <Text className="text-lg font-bold text-cnmi-primary">
+                        {taxi.price}
+                      </Text>
+                    </View>
+
+                    <View className="flex-row items-center mb-2">
+                      <Ionicons name="star" size={14} color="#F59E0B" />
+                      <Text className="text-sm text-cnmi-gray-600 ml-1">
+                        {taxi.rating} • {taxi.vehicle}
+                      </Text>
+                    </View>
+
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-row items-center">
+                        <Ionicons name="time" size={14} color="#6B7280" />
+                        <Text className="text-sm text-cnmi-gray-600 ml-1">
+                          {taxi.estimatedTime} away
+                        </Text>
+                      </View>
+                      <View className="flex-row items-center">
+                        <Ionicons name="car" size={14} color="#6B7280" />
+                        <Text className="text-sm text-cnmi-gray-600 ml-1">
+                          {taxi.plateNumber}
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+
+                {selectedTaxi === taxi.id && (
+                  <View className="mt-4 pt-4 border-t border-cnmi-gray-100">
+                    <CNMIButton
+                      title="Request This Taxi"
+                      onPress={() => {}}
+                      icon={<Ionicons name="call" size={20} color="white" />}
+                    />
+                  </View>
+                )}
+              </TouchableOpacity>
+            </CNMICard>
+          ))}
+        </View>
+
+        {/* Emergency Contact */}
+        <CNMICard variant="outlined" className="m-4 mb-8">
+          <View className="flex-row items-center">
+            <View className="w-10 h-10 bg-red-100 rounded-full items-center justify-center mr-3">
+              <Ionicons name="call" size={20} color="#DC2626" />
+            </View>
+            <View className="flex-1">
+              <Text className="font-semibold text-cnmi-gray-900">Emergency Taxi</Text>
+              <Text className="text-sm text-cnmi-gray-600">24/7 emergency taxi service</Text>
+            </View>
+            <TouchableOpacity className="bg-red-600 px-4 py-2 rounded-lg">
+              <Text className="text-white font-medium">CALL</Text>
+            </TouchableOpacity>
+          </View>
+        </CNMICard>
+      </ScrollView>
+    </SafeAreaView>
+  );
+}
