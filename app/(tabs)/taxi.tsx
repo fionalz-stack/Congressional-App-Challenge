@@ -1,13 +1,17 @@
 import { CNMIButton } from '@/components/ui/CNMIButton';
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function TaxiScreen() {
+  const router = useRouter();
   const [pickupLocation, setPickupLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [selectedTaxi, setSelectedTaxi] = useState<string | null>(null);
+  const [showTaxiRequestModal, setShowTaxiRequestModal] = useState(false);
 
   const availableTaxis = [
     {
@@ -22,7 +26,7 @@ export default function TaxiScreen() {
     },
     {
       id: '2', 
-      driver: 'Saipan Pickup',
+      driver: 'Ms. Lin',
       rating: 4.6,
       price: '$4.50',
       estimatedTime: '5 min',
@@ -32,7 +36,7 @@ export default function TaxiScreen() {
     },
     {
       id: '3',
-      driver: 'Staying Lit',
+      driver: 'Ms. Paraiso',
       rating: 4.9,
       price: '$3.75',
       estimatedTime: '7 min',
@@ -48,6 +52,15 @@ export default function TaxiScreen() {
     { name: 'American Memorial Park', icon: 'leaf' },
     { name: 'DFS Galleria', icon: 'bag' },
   ];
+
+  const handleTaxiRequest = () => {
+    setShowTaxiRequestModal(true);
+  };
+
+  const handleGotIt = () => {
+    setShowTaxiRequestModal(false);
+    router.push('/map');
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-cnmi-gray-50">
@@ -165,7 +178,7 @@ export default function TaxiScreen() {
                   <View className="mt-4 pt-4 border-t border-cnmi-gray-100">
                     <CNMIButton
                       title="Request This Taxi"
-                      onPress={() => {}}
+                      onPress={handleTaxiRequest}
                       icon={<Ionicons name="call" size={20} color="white" />}
                     />
                   </View>
@@ -191,6 +204,29 @@ export default function TaxiScreen() {
           </View>
         </CNMICard>
       </ScrollView>
+
+      {/* Taxi Request Confirmation Modal */}
+      <Modal
+        visible={showTaxiRequestModal}
+        transparent={true}
+        animationType="fade"
+        onRequestClose={() => setShowTaxiRequestModal(false)}
+      >
+        <BlurView intensity={70} tint="light" className="flex-1 justify-center items-center px-4 z-50">
+          <View className="bg-cnmi-primary rounded-3xl p-6 w-full max-w-sm">
+            <Text className="text-white text-2xl font-bold mb-2 text-center">Taxi requested!</Text>
+            <Text className="text-white text-lg mb-1 text-center">Your taxi driver is on</Text>
+            <Text className="text-white text-lg mb-6 text-center">the way.</Text>
+            
+            <TouchableOpacity 
+              className="bg-purple-700 rounded-full py-3 px-8 self-center"
+              onPress={handleGotIt}
+            >
+              <Text className="text-white font-medium text-lg">Got It!</Text>
+            </TouchableOpacity>
+          </View>
+        </BlurView>
+      </Modal>
     </SafeAreaView>
   );
 }
