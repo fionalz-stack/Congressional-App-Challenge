@@ -1,11 +1,13 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
+import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 
 export default function RoutesScreen() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
@@ -63,6 +65,10 @@ export default function RoutesScreen() {
     { id: 'local', name: 'Local', icon: 'location' },
     { id: 'airport', name: 'Airport', icon: 'airplane' },
   ];
+
+  const handleViewRoute = () => {
+    router.push('/map');
+  };
 
   return (
     <SafeAreaView className="flex-1">
@@ -189,7 +195,10 @@ export default function RoutesScreen() {
 
             {/* Action Buttons */}
             <View className="flex-row mt-4 pt-4 border-t border-cnmi-gray-100">
-              <TouchableOpacity className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg">
+              <TouchableOpacity 
+                className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
+                onPress={handleViewRoute}
+              >
                 <Ionicons name="map" size={16} color="#6B46C1" />
                 <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
               </TouchableOpacity>
