@@ -3,10 +3,12 @@ import { CNMICard } from '@/components/ui/CNMICard';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type UserRole = 'passenger' | 'taxi_driver' | 'transit_driver';
 
 export default function SignupScreen() {
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -33,7 +35,7 @@ export default function SignupScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-light">
+    <SafeAreaView className="flex-1 bg-cnmi-light" style={{ paddingTop: insets.top }}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"

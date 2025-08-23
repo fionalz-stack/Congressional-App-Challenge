@@ -3,8 +3,10 @@ import { CNMICard } from '@/components/ui/CNMICard';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function LoginScreen() {
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function LoginScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-light">
+    <SafeAreaView className="flex-1 bg-cnmi-light" style={{ paddingTop: insets.top }}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
@@ -85,7 +87,7 @@ export default function LoginScreen() {
 
           {/* Footer */}
           <Text className="text-center text-sm text-cnmi-gray-500">
-            Connecting the islands, one ride at a time
+            Connecting the community, one ride at a time
           </Text>
         </View>
       </KeyboardAvoidingView>

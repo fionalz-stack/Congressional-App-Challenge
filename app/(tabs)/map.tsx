@@ -4,7 +4,7 @@ import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import {
     Dimensions,
-
+    Image,
     SafeAreaView,
     Text,
     TextInput,
@@ -13,10 +13,12 @@ import {
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { height: SCREEN_HEIGHT } = Dimensions.get('window');
 
 export default function MapScreen() {
+    const insets = useSafeAreaInsets();
     const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchResults, setShowSearchResults] = useState(false);
@@ -114,13 +116,20 @@ export default function MapScreen() {
 
     return (
         <GestureHandlerRootView className="flex-1">
-            <SafeAreaView className="flex-1 bg-cnmi-gray-50">
-                {/* Header */}
-                <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200 z-10" onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+                    <SafeAreaView className="flex-1 bg-cnmi-gray-50" style={{ paddingTop: insets.top }}>
+            {/* Header */}
+            <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200 z-10" onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
                     <View className="flex-row items-center justify-between">
-                        <View>
-                            <Text className="text-lg font-semibold text-cnmi-gray-900">Transit CNMI</Text>
-                            <Text className="text-sm text-cnmi-gray-600">Saipan, CNMI</Text>
+                        <View className="flex-row items-center">
+                            <Image 
+                                source={require('@/assets/images/transit.png')} 
+                                className="w-8 h-8 mr-3"
+                                resizeMode="contain"
+                            />
+                            <View>
+                                <Text className="text-lg font-semibold text-cnmi-gray-900">Transit CNMI</Text>
+                                <Text className="text-sm text-cnmi-gray-600">Saipan, CNMI</Text>
+                            </View>
                         </View>
                         <View className="flex-row items-center space-x-2">
                             {/* Check In Button */}
@@ -164,7 +173,7 @@ export default function MapScreen() {
 
                     {/* Search Overlay - Only show when no destination selected */}
                     {!selectedDestination && (
-                        <View className="absolute top-4 left-4 right-4 z-20">
+                        <View className="absolute left-4 right-4 z-20" style={{ top: insets.top + 16 }}>
                             <CNMICard variant="elevated">
                                 <View className="flex-row items-center" style={{ minHeight: 44 }}>
                                     <Ionicons name="search" size={20} color="#6B7280" style={{ marginRight: 12 }} />

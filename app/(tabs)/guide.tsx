@@ -2,8 +2,10 @@ import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function GuideScreen() {
+  const insets = useSafeAreaInsets();
   const [selectedCategory, setSelectedCategory] = useState('attractions');
 
   const categories = [
@@ -80,7 +82,7 @@ export default function GuideScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-gray-50">
+    <SafeAreaView className="flex-1 bg-cnmi-gray-50" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200">
         <Text className="text-xl font-bold text-cnmi-gray-900">Visitor Guide</Text>

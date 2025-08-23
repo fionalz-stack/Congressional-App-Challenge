@@ -5,9 +5,11 @@ import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function TaxiScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [pickupLocation, setPickupLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [selectedTaxi, setSelectedTaxi] = useState<string | null>(null);
@@ -63,7 +65,7 @@ export default function TaxiScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-gray-50">
+    <SafeAreaView className="flex-1 bg-cnmi-gray-50" style={{ paddingTop: insets.top }}>
       {/* Header */}
       <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200">
         <Text className="text-xl font-bold text-cnmi-gray-900">Call a Taxi</Text>

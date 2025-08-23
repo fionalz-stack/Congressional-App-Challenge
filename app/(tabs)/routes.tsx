@@ -5,9 +5,11 @@ import { useRouter } from 'expo-router';
 import React, { useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function RoutesScreen() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
@@ -71,7 +73,7 @@ export default function RoutesScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="flex-1" style={{ paddingTop: insets.top }}>
       {/* Google Maps Background */}
       <View className="absolute inset-0 z-0" style={{ width: '100%', height: '100%' }}>
         <MapView
@@ -230,10 +232,7 @@ export default function RoutesScreen() {
             
             <TouchableOpacity 
               className="bg-purple-700 rounded-full py-3 px-8 self-center"
-              onPress={() => {
-                setShowCheckInModal(false);
-                router.push('/map');
-              }}
+              onPress={() => setShowCheckInModal(false)}
             >
               <Text className="text-white font-medium text-lg">Got It!</Text>
             </TouchableOpacity>
