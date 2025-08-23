@@ -230,7 +230,10 @@ export default function RoutesScreen() {
             
             <TouchableOpacity 
               className="bg-purple-700 rounded-full py-3 px-8 self-center"
-              onPress={() => setShowCheckInModal(false)}
+              onPress={() => {
+                setShowCheckInModal(false);
+                router.push('/map');
+              }}
             >
               <Text className="text-white font-medium text-lg">Got It!</Text>
             </TouchableOpacity>
