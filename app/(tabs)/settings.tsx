@@ -2,13 +2,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
-import { useColorScheme } from '../../hooks/useColorScheme';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function SettingsScreen() {
-  const colorScheme = useColorScheme();
+  const { isDarkMode, setDarkMode } = useDarkMode();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [locationEnabled, setLocationEnabled] = React.useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = React.useState(colorScheme === 'dark');
 
   const SettingItem = ({ 
     icon, 
@@ -26,18 +25,18 @@ export default function SettingsScreen() {
     const content = (
       <View style={styles.settingItem}>
         <View style={styles.settingLeft}>
-          <View style={[styles.iconContainer, { backgroundColor: colorScheme === 'dark' ? '#374151' : '#F3F4F6' }]}>
-            <Ionicons name={icon as any} size={20} color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'} />
-          </View>
-          <View style={styles.settingText}>
-            <Text style={[styles.settingTitle, { color: colorScheme === 'dark' ? '#F9FAFB' : '#111827' }]}>
-              {title}
+                  <View style={[styles.iconContainer, { backgroundColor: isDarkMode ? '#374151' : '#F3F4F6' }]}>
+          <Ionicons name={icon as any} size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
+        </View>
+        <View style={styles.settingText}>
+          <Text style={[styles.settingTitle, { color: isDarkMode ? '#F9FAFB' : '#111827' }]}>
+            {title}
+          </Text>
+          {subtitle && (
+            <Text style={[styles.settingSubtitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+              {subtitle}
             </Text>
-            {subtitle && (
-              <Text style={[styles.settingSubtitle, { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }]}>
-                {subtitle}
-              </Text>
-            )}
+          )}
           </View>
         </View>
         {rightElement}
@@ -56,18 +55,18 @@ export default function SettingsScreen() {
   };
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: colorScheme === 'dark' ? '#111827' : '#F9FAFB' }]}>
+    <ScrollView style={[styles.container, { backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }]}>
       <View style={styles.header}>
-        <Text style={[styles.headerTitle, { color: colorScheme === 'dark' ? '#F9FAFB' : '#111827' }]}>
+        <Text style={[styles.headerTitle, { color: isDarkMode ? '#F9FAFB' : '#111827' }]}>
           Settings
         </Text>
-        <Text style={[styles.headerSubtitle, { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }]}>
+        <Text style={[styles.headerSubtitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
           Customize your app experience
         </Text>
       </View>
 
-      <View style={[styles.section, { backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF' }]}>
-        <Text style={[styles.sectionTitle, { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }]}>
+      <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
           Notifications
         </Text>
         <SettingItem
@@ -85,8 +84,8 @@ export default function SettingsScreen() {
         />
       </View>
 
-      <View style={[styles.section, { backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF' }]}>
-        <Text style={[styles.sectionTitle, { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }]}>
+      <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
           Location
         </Text>
         <SettingItem
@@ -104,8 +103,8 @@ export default function SettingsScreen() {
         />
       </View>
 
-      <View style={[styles.section, { backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF' }]}>
-        <Text style={[styles.sectionTitle, { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }]}>
+      <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
           Appearance
         </Text>
         <SettingItem
@@ -114,10 +113,10 @@ export default function SettingsScreen() {
           subtitle="Use dark theme"
           rightElement={
             <Switch
-              value={darkModeEnabled}
-              onValueChange={setDarkModeEnabled}
+              value={isDarkMode}
+              onValueChange={setDarkMode}
               trackColor={{ false: '#E5E7EB', true: '#6B46C1' }}
-              thumbColor={darkModeEnabled ? '#FFFFFF' : '#F9FAFB'}
+              thumbColor={isDarkMode ? '#FFFFFF' : '#F9FAFB'}
             />
           }
         />
@@ -126,14 +125,14 @@ export default function SettingsScreen() {
           title="Language"
           subtitle="English"
           rightElement={
-            <Ionicons name="chevron-forward" size={20} color={colorScheme === 'dark' ? '#9CA3AF' : '#6B7280'} />
+            <Ionicons name="chevron-forward" size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
           }
           onPress={() => router.push('/(tabs)/language-selection')}
         />
       </View>
 
-      <View style={[styles.section, { backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF' }]}>
-        <Text style={[styles.sectionTitle, { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }]}>
+      <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
+        <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
           About
         </Text>
         <SettingItem

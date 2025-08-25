@@ -2,14 +2,16 @@ import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function RoutesScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
+  const { isDarkMode } = useDarkMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
@@ -93,9 +95,24 @@ export default function RoutesScreen() {
       </View>
 
       {/* Header */}
-      <BlurView intensity={70} tint="light" className="px-4 py-3 border-b border-cnmi-gray-200 z-10">
-        <Text className="text-xl font-bold text-cnmi-gray-900">Bus Routes</Text>
-        <Text className="text-sm text-cnmi-gray-600">Find your route across CNMI</Text>
+      <BlurView 
+        intensity={70} 
+        tint={isDarkMode ? "dark" : "light"} 
+        className="px-4 py-3 border-b z-10"
+        style={{ borderColor: isDarkMode ? '#374151' : '#E5E7EB' }}
+      >
+        <Text 
+          className="text-xl font-bold"
+          style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+        >
+          Bus Routes
+        </Text>
+        <Text 
+          className="text-sm"
+          style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+        >
+          Find your route across CNMI
+        </Text>
       </BlurView>
 
       {/* Search Bar */}

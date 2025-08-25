@@ -1,8 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { useColorScheme } from '../../hooks/useColorScheme';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
 interface Language {
   id: string;
@@ -21,7 +21,7 @@ const languages: Language[] = [
 ];
 
 export default function LanguageSelectionScreen() {
-  const colorScheme = useColorScheme();
+  const { isDarkMode } = useDarkMode();
   const [selectedLanguage, setSelectedLanguage] = useState<string>('en');
 
   const selectLanguage = (languageId: string) => {
@@ -51,8 +51,8 @@ export default function LanguageSelectionScreen() {
         style={[
           styles.languageItem,
           { 
-            backgroundColor: colorScheme === 'dark' ? '#1F2937' : '#FFFFFF',
-            borderColor: colorScheme === 'dark' ? '#374151' : '#E5E7EB'
+            backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+            borderColor: isDarkMode ? '#374151' : '#E5E7EB'
           }
         ]}
         onPress={() => selectLanguage(language.id)}
@@ -60,7 +60,7 @@ export default function LanguageSelectionScreen() {
         <View style={styles.languageLeft}>
           <View style={[
             styles.flagContainer,
-            { backgroundColor: colorScheme === 'dark' ? '#374151' : '#F3F4F6' }
+            { backgroundColor: isDarkMode ? '#374151' : '#F3F4F6' }
           ]}>
             <Text style={styles.flagEmoji}>
               {language.id === 'en' ? '🇺🇸' : 
@@ -74,13 +74,13 @@ export default function LanguageSelectionScreen() {
           <View style={styles.languageText}>
             <Text style={[
               styles.languageName,
-              { color: colorScheme === 'dark' ? '#F9FAFB' : '#111827' }
+              { color: isDarkMode ? '#F9FAFB' : '#111827' }
             ]}>
               {language.name}
             </Text>
             <Text style={[
               styles.languageNative,
-              { color: colorScheme === 'dark' ? '#9CA3AF' : '#6B7280' }
+              { color: isDarkMode ? '#9CA3AF' : '#6B7280' }
             ]}>
               {language.nativeName}
             </Text>
@@ -92,7 +92,7 @@ export default function LanguageSelectionScreen() {
             styles.radioButton,
             {
               backgroundColor: isSelected ? '#6B46C1' : 'transparent',
-              borderColor: isSelected ? '#6B46C1' : (colorScheme === 'dark' ? '#6B7280' : '#D1D5DB'),
+              borderColor: isSelected ? '#6B46C1' : (isDarkMode ? '#6B7280' : '#D1D5DB'),
             }
           ]}>
             {isSelected && (

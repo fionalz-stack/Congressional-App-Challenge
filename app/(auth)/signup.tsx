@@ -1,14 +1,16 @@
 import { CNMIButton } from '@/components/ui/CNMIButton';
 import { CNMICard } from '@/components/ui/CNMICard';
 import { router } from 'expo-router';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
 type UserRole = 'passenger' | 'taxi_driver' | 'transit_driver';
 
 export default function SignupScreen() {
   const insets = useSafeAreaInsets();
+  const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -35,7 +37,13 @@ export default function SignupScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-light" style={{ paddingTop: insets.top }}>
+    <SafeAreaView 
+      className="flex-1" 
+      style={{ 
+        paddingTop: insets.top,
+        backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
+      }}
+    >
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
@@ -46,8 +54,16 @@ export default function SignupScreen() {
             <View className="w-20 h-20 bg-cnmi-primary rounded-2xl items-center justify-center mb-4">
               <Text className="text-white text-2xl font-bold">🚌</Text>
             </View>
-            <Text className="text-2xl font-bold text-cnmi-gray-900 mb-2">Join TRANSIT CNMI</Text>
-            <Text className="text-base text-cnmi-gray-600 text-center">
+            <Text 
+              className="text-2xl font-bold mb-2"
+              style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+            >
+              Join TRANSIT CNMI
+            </Text>
+            <Text 
+              className="text-base text-center"
+              style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+            >
               Create your account to get started
             </Text>
           </View>

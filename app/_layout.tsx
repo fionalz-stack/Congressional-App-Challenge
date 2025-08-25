@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { DarkModeProvider } from '../contexts/DarkModeContext';
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -22,16 +23,18 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <GluestackUIProvider mode="light">
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-          <Stack>
-            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="+not-found" />
-          </Stack>
-          <StatusBar style="auto" translucent={false} />
-        </ThemeProvider>
-      </GluestackUIProvider>
+      <DarkModeProvider>
+        <GluestackUIProvider mode="light">
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="+not-found" />
+            </Stack>
+            <StatusBar style="auto" translucent={false} />
+          </ThemeProvider>
+        </GluestackUIProvider>
+      </DarkModeProvider>
     </SafeAreaProvider>
   );
 }

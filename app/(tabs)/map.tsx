@@ -6,6 +6,7 @@ import {
     Dimensions,
     Image,
     SafeAreaView,
+    ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
@@ -14,60 +15,77 @@ import {
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
-const { height: SCREEN_HEIGHT } = Dimensions.get('window');
+// Constants
+const { height: SCREEN_HEIGHT, width: SCREEN_WIDTH } = Dimensions.get('window');
+const SEARCH_BAR_HEIGHT = 33;
+const SEARCH_BAR_MARGIN_PERCENT = 0.046; // 4.6% margin from edges
+const SEARCH_BAR_TOP_OFFSET = 50; // Additional offset from top
+const SEARCH_RESULTS_MAX_HEIGHT_RATIO = 0.4; // 40% of screen height
+
+// Types
+type TransitMode = 'fixed' | 'ride';
+
+interface BusLocation {
+    id: string;
+    latitude: number;
+    longitude: number;
+    route: string;
+    heading: number;
+}
+
+interface Destination {
+    id: string;
+    name: string;
+    type: 'airport' | 'district' | 'school' | 'hospital' | 'park' | 'shopping' | 'beach';
+}
+
+interface RouteOption {
+    id: string;
+    route: string;
+    destination: string;
+    duration: string;
+    nextBus: string;
+}
+
+interface Arrival {
+    id: string;
+    route: string;
+    time: string;
+    type: string;
+}
+
+interface Taxi {
+    id: string;
+    driver: string;
+    price: string;
+    time: string;
+}
 
 export default function MapScreen() {
+    // State
     const insets = useSafeAreaInsets();
+    const { isDarkMode } = useDarkMode();
     const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [selectedDestination, setSelectedDestination] = useState<string | null>(null);
     const [trackingBus, setTrackingBus] = useState<string | null>(null);
-    const bottomSheetRef = useRef<BottomSheet>(null);
-    const [transitMode, setTransitMode] = useState<'fixed' | 'ride'>('fixed');
+    const [transitMode, setTransitMode] = useState<TransitMode>('fixed');
     const [headerHeight, setHeaderHeight] = useState(0);
+    
+    // Refs
+    const bottomSheetRef = useRef<BottomSheet>(null);
 
-    // Bottom sheet snap points - initially hidden, then show when destination selected
-
-    // Include a max pixel height so it stops before overlapping the header
-    const snapPoints = useMemo(() => {
-        const margin = 8; // small spacing between sheet and header
-        const maxHeight = Math.max(300, SCREEN_HEIGHT - headerHeight - margin);
-        return ['15%', '60%', maxHeight];
-    }, [headerHeight]);
-
-    // Saipan coordinates
-    const initialRegion = {
-        latitude: 15.2137,
-        longitude: 145.7546,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-    };
-
-    // Mock bus locations
-    const busLocations = [
+    // Mock data
+    const busLocations: BusLocation[] = [
         { id: '1', latitude: 15.2100, longitude: 145.7500, route: '16', heading: 45 },
         { id: '2', latitude: 15.2200, longitude: 145.7600, route: '8', heading: 180 },
         { id: '3', latitude: 15.2050, longitude: 145.7450, route: '12', heading: 270 },
     ];
 
-    // Mock data
-    const nextArrivals = [
-        { id: '1', route: '16 routes High School', time: '2 min', type: 'bus' },
-        { id: '2', route: 'Ada Gym Track & Field', time: '5 min', type: 'bus' },
-        { id: '3', route: 'Saipan International Airport', time: '8 min', type: 'bus' },
-        { id: '4', route: 'First Hawaiian Bank', time: '12 min', type: 'bus' },
-    ];
-
-    const nearbyTaxis = [
-        { id: '1', driver: 'Ms. Cab', price: '$3.00 Per', time: '3 min' },
-        { id: '2', driver: 'Saipan Pickup', price: '$4.50', time: '5 min' },
-        { id: '3', driver: 'Staying Lit', price: '$3.75', time: '7 min' },
-    ];
-
-    // Mock destinations for search
-    const destinations = [
+    const destinations: Destination[] = [
         { id: '1', name: 'Saipan International Airport', type: 'airport' },
         { id: '2', name: 'Garapan Tourist District', type: 'district' },
         { id: '3', name: 'Northern Marianas College', type: 'school' },
@@ -78,61 +96,131 @@ export default function MapScreen() {
         { id: '8', name: 'Susupe', type: 'district' },
     ];
 
-    // Mock route options for destinations
-    const routeOptions = [
+    const routeOptions: RouteOption[] = [
         { id: '1', route: 'Route 16', destination: 'Saipan International Airport', duration: '25 min', nextBus: '3 min' },
         { id: '2', route: 'Route 8', destination: 'Garapan Tourist District', duration: '15 min', nextBus: '7 min' },
         { id: '3', route: 'Route 12', destination: 'Northern Marianas College', duration: '20 min', nextBus: '5 min' },
     ];
 
-    const handleCheckIn = () => {
-        // TODO: Implement check-in functionality
-        console.log('Check in pressed');
+    const nextArrivals: Arrival[] = [
+        { id: '1', route: '16 routes High School', time: '2 min', type: 'bus' },
+        { id: '2', route: 'Ada Gym Track & Field', time: '5 min', type: 'bus' },
+        { id: '3', route: 'Saipan International Airport', time: '8 min', type: 'bus' },
+        { id: '4', route: 'First Hawaiian Bank', time: '12 min', type: 'bus' },
+    ];
+
+    const nearbyTaxis: Taxi[] = [
+        { id: '1', driver: 'Ms. Cab', price: '$3.00 Per', time: '3 min' },
+        { id: '2', driver: 'Saipan Pickup', price: '$4.50', time: '5 min' },
+        { id: '3', driver: 'Staying Lit', price: '$3.75', time: '7 min' },
+    ];
+
+    // Map configuration
+    const initialRegion = {
+        latitude: 15.2137,
+        longitude: 145.7546,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
     };
 
-    const handleSearch = (text: string) => {
+    // Computed values
+    const getSearchBarTopPosition = useCallback(() => {
+        const baseTop = insets.top;
+        const inchOffset = -96; // Move up by approximately 1 inch (96px)
+        const screenHeightRatio = SCREEN_HEIGHT / 800; // 800px as baseline
+        const dynamicOffset = inchOffset * screenHeightRatio;
+        
+        return Math.max(0, baseTop + dynamicOffset + SEARCH_BAR_TOP_OFFSET);
+    }, [insets.top]);
+
+    const snapPoints = useMemo(() => {
+        const margin = 8;
+        const maxHeight = Math.max(300, SCREEN_HEIGHT - headerHeight - margin);
+        return ['15%', '60%', maxHeight];
+    }, [headerHeight]);
+
+    // Event handlers
+    const handleCheckIn = useCallback(() => {
+        console.log('Check in pressed');
+        // TODO: Implement check-in functionality
+    }, []);
+
+    const handleSearch = useCallback((text: string) => {
         setSearchQuery(text);
         setShowSearchResults(text.length > 0);
-    };
+    }, []);
 
-    const handleDestinationSelect = (destination: string) => {
+    const handleClearSearch = useCallback(() => {
+        setSearchQuery('');
+        setShowSearchResults(false);
+        setSelectedDestination(null);
+        setTrackingBus(null);
+        setSelectedRoute(null);
+    }, []);
+
+    const handleDestinationSelect = useCallback((destination: string) => {
         setSelectedDestination(destination);
         setSearchQuery(destination);
         setShowSearchResults(false);
-        // Open bottom sheet to show route options
         bottomSheetRef.current?.snapToIndex(1);
-    };
+    }, []);
 
-    const handleRouteSelect = (routeId: string) => {
+    const handleRouteSelect = useCallback((routeId: string) => {
         setTrackingBus(routeId);
         setSelectedRoute(routeId);
-        // Minimize bottom sheet after selecting route
         bottomSheetRef.current?.snapToIndex(0);
-    };
+    }, []);
 
     const handleSheetChanges = useCallback((index: number) => {
         console.log('handleSheetChanges', index);
     }, []);
 
+    const getDestinationIcon = useCallback((type: Destination['type']) => {
+        const iconMap: Record<Destination['type'], keyof typeof Ionicons.glyphMap> = {
+            airport: 'airplane',
+            school: 'school',
+            hospital: 'medical',
+            park: 'leaf',
+            shopping: 'storefront',
+            beach: 'water',
+            district: 'location'
+        };
+        return iconMap[type] || 'location';
+    }, []);
+
+    const filteredDestinations = useMemo(() => {
+        return destinations
+            .filter(dest => dest.name.toLowerCase().includes(searchQuery.toLowerCase()))
+            .slice(0, 8);
+    }, [searchQuery]);
+
     return (
         <GestureHandlerRootView className="flex-1">
-                    <SafeAreaView className="flex-1 bg-cnmi-gray-50" style={{ paddingTop: insets.top }}>
-            {/* Header */}
-            <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200 z-10" onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}>
+            <SafeAreaView 
+                className="flex-1" 
+                style={{ 
+                    paddingTop: insets.top,
+                    backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
+                }}
+            >
+                {/* Header */}
+                <View 
+                    className="px-4 py-1 border-b z-10" 
+                    style={{
+                        backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+                        borderColor: isDarkMode ? '#374151' : '#E5E7EB'
+                    }}
+                    onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
+                >
                     <View className="flex-row items-center justify-between">
                         <View className="flex-row items-center">
                             <Image 
                                 source={require('@/assets/images/transit.png')} 
-                                className="w-8 h-8 mr-3"
+                                className="w-12 h-12"
                                 resizeMode="contain"
                             />
-                            <View>
-                                <Text className="text-lg font-semibold text-cnmi-gray-900">Transit CNMI</Text>
-                                <Text className="text-sm text-cnmi-gray-600">Saipan, CNMI</Text>
-                            </View>
                         </View>
                         <View className="flex-row items-center space-x-2">
-                            {/* Check In Button */}
                             <TouchableOpacity
                                 onPress={handleCheckIn}
                                 className="w-10 h-10 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
@@ -157,7 +245,6 @@ export default function MapScreen() {
                         showsCompass={false}
                         toolbarEnabled={false}
                     >
-                        {/* Bus Markers */}
                         {busLocations.map((bus) => (
                             <Marker
                                 key={bus.id}
@@ -171,11 +258,19 @@ export default function MapScreen() {
                         ))}
                     </MapView>
 
-                    {/* Search Overlay - Only show when no destination selected */}
+                    {/* Search Overlay */}
                     {!selectedDestination && (
-                        <View className="absolute left-4 right-4 z-20" style={{ top: insets.top + 16 }}>
+                        <View 
+                            className="absolute z-20" 
+                            style={{ 
+                                top: getSearchBarTopPosition(),
+                                left: Math.max(16, SCREEN_WIDTH * SEARCH_BAR_MARGIN_PERCENT),
+                                right: Math.max(16, SCREEN_WIDTH * SEARCH_BAR_MARGIN_PERCENT),
+                                height: SEARCH_BAR_HEIGHT
+                            }}
+                        >
                             <CNMICard variant="elevated">
-                                <View className="flex-row items-center" style={{ minHeight: 44 }}>
+                                <View className="flex-row items-center" style={{ minHeight: SEARCH_BAR_HEIGHT, height: SEARCH_BAR_HEIGHT }}>
                                     <Ionicons name="search" size={20} color="#6B7280" style={{ marginRight: 12 }} />
                                     <TextInput
                                         placeholder="Where do you want to go?"
@@ -186,19 +281,13 @@ export default function MapScreen() {
                                         style={{
                                             textAlignVertical: 'center',
                                             paddingVertical: 0,
-                                            height: 44,
+                                            height: SEARCH_BAR_HEIGHT,
                                             lineHeight: 20
                                         }}
                                         multiline={false}
                                     />
                                     {searchQuery.length > 0 && (
-                                        <TouchableOpacity onPress={() => {
-                                            setSearchQuery('');
-                                            setShowSearchResults(false);
-                                            setSelectedDestination(null);
-                                            setTrackingBus(null);
-                                            setSelectedRoute(null);
-                                        }}>
+                                        <TouchableOpacity onPress={handleClearSearch}>
                                             <Ionicons name="close" size={20} color="#6B7280" />
                                         </TouchableOpacity>
                                     )}
@@ -207,24 +296,23 @@ export default function MapScreen() {
 
                             {/* Search Results */}
                             {showSearchResults && (
-                                <View className="mt-2">
+                                <View 
+                                    className="mt-2"
+                                    style={{ maxHeight: SCREEN_HEIGHT * SEARCH_RESULTS_MAX_HEIGHT_RATIO }}
+                                >
                                     <CNMICard variant="elevated">
-                                        {destinations
-                                            .filter(dest => dest.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                                            .slice(0, 5)
-                                            .map((destination) => (
+                                        <ScrollView 
+                                            showsVerticalScrollIndicator={false}
+                                            nestedScrollEnabled={true}
+                                        >
+                                            {filteredDestinations.map((destination) => (
                                                 <TouchableOpacity
                                                     key={destination.id}
                                                     onPress={() => handleDestinationSelect(destination.name)}
                                                     className="flex-row items-center py-3 border-b border-cnmi-gray-100 last:border-b-0"
                                                 >
                                                     <Ionicons
-                                                        name={destination.type === 'airport' ? 'airplane' :
-                                                            destination.type === 'school' ? 'school' :
-                                                                destination.type === 'hospital' ? 'medical' :
-                                                                    destination.type === 'park' ? 'leaf' :
-                                                                        destination.type === 'shopping' ? 'storefront' :
-                                                                            destination.type === 'beach' ? 'water' : 'location'}
+                                                        name={getDestinationIcon(destination.type)}
                                                         size={20}
                                                         color="#6B46C1"
                                                         style={{ marginRight: 12 }}
@@ -232,17 +320,23 @@ export default function MapScreen() {
                                                     <Text className="flex-1 text-cnmi-gray-900">{destination.name}</Text>
                                                 </TouchableOpacity>
                                             ))}
+                                        </ScrollView>
                                     </CNMICard>
                                 </View>
                             )}
                         </View>
                     )}
 
-
-
                     {/* Bus Tracking */}
                     {trackingBus && (
-                        <View className="absolute top-4 left-4 right-4 z-20">
+                        <View 
+                            className="absolute z-20"
+                            style={{
+                                top: getSearchBarTopPosition() + 60,
+                                left: Math.max(16, SCREEN_WIDTH * 0.04),
+                                right: Math.max(16, SCREEN_WIDTH * 0.04)
+                            }}
+                        >
                             <CNMICard variant="elevated">
                                 <View className="flex-row items-center justify-between">
                                     <View className="flex-1">
@@ -268,8 +362,8 @@ export default function MapScreen() {
                     snapPoints={snapPoints}
                     onChange={handleSheetChanges}
                     topInset={headerHeight + 8}
-                    backgroundStyle={{ backgroundColor: 'white' }}
-                    handleIndicatorStyle={{ backgroundColor: '#D1D5DB' }}
+                    backgroundStyle={{ backgroundColor: isDarkMode ? '#1F2937' : 'white' }}
+                    handleIndicatorStyle={{ backgroundColor: isDarkMode ? '#6B7280' : '#D1D5DB' }}
                     enablePanDownToClose={false}
                 >
                     {/* Search Bar in Bottom Sheet */}
@@ -293,11 +387,7 @@ export default function MapScreen() {
                                         multiline={false}
                                     />
                                     <TouchableOpacity onPress={() => {
-                                        setSearchQuery('');
-                                        setShowSearchResults(false);
-                                        setSelectedDestination(null);
-                                        setTrackingBus(null);
-                                        setSelectedRoute(null);
+                                        handleClearSearch();
                                         bottomSheetRef.current?.close();
                                     }}>
                                         <Ionicons name="close" size={20} color="#6B7280" />
@@ -308,21 +398,32 @@ export default function MapScreen() {
                     )}
 
                     <View className="px-4 pb-4">
-                        <Text className="text-lg font-semibold text-cnmi-gray-900 mb-4">
+                        <Text 
+                            className="text-lg font-semibold mb-4"
+                            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                        >
                             {selectedDestination && !trackingBus ? `Routes to ${selectedDestination}` : 'Transit Info'}
                         </Text>
                     </View>
 
                     <BottomSheetScrollView contentContainerStyle={{ paddingHorizontal: 16 }}>
-
-
-                        {/* Destination summary */}
+                        {/* Destination Summary */}
                         {selectedDestination && (
-                            <View className='my-5'>
-                                <Text className="text-base font-semibold text-cnmi-gray-900">{selectedDestination}</Text>
-                                <View className='flex-row items-center mt-1'>
-                                    <Ionicons name="navigate" size={20} color="#6B7280" />
-                                    <Text className='text-cnmi-gray-500 ml-2'>Approx. distance shown on map</Text>
+                            <View className="my-5">
+                                <Text 
+                                    className="text-base font-semibold"
+                                    style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                >
+                                    {selectedDestination}
+                                </Text>
+                                <View className="flex-row items-center mt-1">
+                                    <Ionicons name="navigate" size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
+                                    <Text 
+                                        className="ml-2"
+                                        style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                    >
+                                        Approx. distance shown on map
+                                    </Text>
                                 </View>
                             </View>
                         )}
@@ -330,7 +431,7 @@ export default function MapScreen() {
                         {/* Route Options for Selected Destination */}
                         {selectedDestination && !trackingBus && (
                             <View className="mb-6">
-                                {/* Segmented Switcher */}
+                                {/* Transit Mode Selector */}
                                 <View className="flex-row rounded-full overflow-hidden border border-cnmi-primary mb-4">
                                     <TouchableOpacity
                                         onPress={() => setTransitMode('fixed')}
@@ -339,7 +440,9 @@ export default function MapScreen() {
                                         accessibilityState={{ selected: transitMode === 'fixed' }}
                                     >
                                         <View className={`${transitMode === 'fixed' ? 'bg-cnmi-primary' : 'bg-transparent'} py-3 items-center`}> 
-                                            <Text className={`${transitMode === 'fixed' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>Fixed Bus Route</Text>
+                                            <Text className={`${transitMode === 'fixed' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>
+                                                Fixed Bus Route
+                                            </Text>
                                         </View>
                                     </TouchableOpacity>
                                     <TouchableOpacity
@@ -349,32 +452,55 @@ export default function MapScreen() {
                                         accessibilityState={{ selected: transitMode === 'ride' }}
                                     >
                                         <View className={`${transitMode === 'ride' ? 'bg-cnmi-primary' : 'bg-transparent'} py-3 items-center`}>
-                                            <Text className={`${transitMode === 'ride' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>Call-A-Ride</Text>
+                                            <Text className={`${transitMode === 'ride' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>
+                                                Call-A-Ride
+                                            </Text>
                                         </View>
                                     </TouchableOpacity>
                                 </View>
 
                                 {transitMode === 'fixed' && (
                                     <View>
-                                        <Text className="text-lg font-bold text-cnmi-gray-900 mb-3">Choose your route</Text>
+                                        <Text 
+                                            className="text-lg font-bold mb-3"
+                                            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                        >
+                                            Choose your route
+                                        </Text>
                                         {routeOptions.map((route) => (
                                             <TouchableOpacity
                                                 key={route.id}
                                                 onPress={() => handleRouteSelect(route.id)}
-                                                className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                                className="flex-row items-center justify-between py-3 border-b"
+                                                style={{ borderColor: isDarkMode ? '#374151' : '#F3F4F6' }}
                                             >
                                                 <View className="flex-row items-center flex-1">
                                                     <View className="w-10 h-10 bg-cnmi-primary rounded-full items-center justify-center mr-3">
                                                         <Ionicons name="bus" size={20} color="white" />
                                                     </View>
                                                     <View className="flex-1">
-                                                        <Text className="font-medium text-cnmi-gray-900">{route.route}</Text>
-                                                        <Text className="text-sm text-cnmi-gray-600">{route.duration} journey</Text>
+                                                        <Text 
+                                                            className="font-medium"
+                                                            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                                        >
+                                                            {route.route}
+                                                        </Text>
+                                                        <Text 
+                                                            className="text-sm"
+                                                            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                                        >
+                                                            {route.duration} journey
+                                                        </Text>
                                                     </View>
                                                 </View>
                                                 <View className="items-end">
                                                     <Text className="font-semibold text-cnmi-primary">{route.nextBus}</Text>
-                                                    <Text className="text-xs text-cnmi-gray-500">Next bus</Text>
+                                                    <Text 
+                                                        className="text-xs"
+                                                        style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                                    >
+                                                        Next bus
+                                                    </Text>
                                                 </View>
                                             </TouchableOpacity>
                                         ))}
@@ -383,19 +509,35 @@ export default function MapScreen() {
 
                                 {transitMode === 'ride' && (
                                     <View>
-                                        <Text className="text-lg font-bold text-cnmi-gray-900 mb-3">Nearby drivers</Text>
+                                        <Text 
+                                            className="text-lg font-bold mb-3"
+                                            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                        >
+                                            Nearby drivers
+                                        </Text>
                                         {nearbyTaxis.map((taxi) => (
                                             <TouchableOpacity
                                                 key={taxi.id}
-                                                className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                                className="flex-row items-center justify-between py-3 border-b"
+                                                style={{ borderColor: isDarkMode ? '#374151' : '#F3F4F6' }}
                                             >
                                                 <View className="flex-row items-center flex-1">
                                                     <View className="w-10 h-10 bg-cnmi-secondary rounded-full items-center justify-center mr-3">
                                                         <Ionicons name="car" size={20} color="white" />
                                                     </View>
                                                     <View className="flex-1">
-                                                        <Text className="font-medium text-cnmi-gray-900">{taxi.driver}</Text>
-                                                        <Text className="text-sm text-cnmi-gray-600">{taxi.price}</Text>
+                                                        <Text 
+                                                            className="font-medium"
+                                                            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                                        >
+                                                            {taxi.driver}
+                                                        </Text>
+                                                        <Text 
+                                                            className="text-sm"
+                                                            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                                        >
+                                                            {taxi.price}
+                                                        </Text>
                                                     </View>
                                                 </View>
                                                 <View className="items-end">
@@ -411,30 +553,51 @@ export default function MapScreen() {
                             </View>
                         )}
 
-                        {/* Default Transit Info when no destination selected */}
+                        {/* Default Transit Info */}
                         {!selectedDestination && (
                             <>
                                 {/* Next Arrivals */}
                                 <View className="mb-6">
-                                    <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Next Arrivals</Text>
+                                    <Text 
+                                        className="text-lg font-semibold mb-3"
+                                        style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                    >
+                                        Next Arrivals
+                                    </Text>
                                     {nextArrivals.map((arrival) => (
                                         <TouchableOpacity
                                             key={arrival.id}
                                             onPress={() => setSelectedRoute(arrival.id)}
-                                            className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                            className="flex-row items-center justify-between py-3 border-b"
+                                            style={{ borderColor: isDarkMode ? '#374151' : '#F3F4F6' }}
                                         >
                                             <View className="flex-row items-center flex-1">
                                                 <View className="w-10 h-10 bg-cnmi-primary rounded-full items-center justify-center mr-3">
                                                     <Ionicons name="bus" size={20} color="white" />
                                                 </View>
                                                 <View className="flex-1">
-                                                    <Text className="font-medium text-cnmi-gray-900">{arrival.route}</Text>
-                                                    <Text className="text-sm text-cnmi-gray-600">Bus Route</Text>
+                                                    <Text 
+                                                        className="font-medium"
+                                                        style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                                    >
+                                                        {arrival.route}
+                                                    </Text>
+                                                    <Text 
+                                                        className="text-sm"
+                                                        style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                                    >
+                                                        Bus Route
+                                                    </Text>
                                                 </View>
                                             </View>
                                             <View className="items-end">
                                                 <Text className="font-semibold text-cnmi-primary">{arrival.time}</Text>
-                                                <Text className="text-xs text-cnmi-gray-500">Arrival</Text>
+                                                <Text 
+                                                    className="text-xs"
+                                                    style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                                >
+                                                    Arrival
+                                                </Text>
                                             </View>
                                         </TouchableOpacity>
                                     ))}
@@ -442,19 +605,35 @@ export default function MapScreen() {
 
                                 {/* Nearby Taxis */}
                                 <View className="mb-8">
-                                    <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Call a Taxi</Text>
+                                    <Text 
+                                        className="text-lg font-semibold mb-3"
+                                        style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                    >
+                                        Call a Taxi
+                                    </Text>
                                     {nearbyTaxis.map((taxi) => (
                                         <TouchableOpacity
                                             key={taxi.id}
-                                            className="flex-row items-center justify-between py-3 border-b border-cnmi-gray-100"
+                                            className="flex-row items-center justify-between py-3 border-b"
+                                            style={{ borderColor: isDarkMode ? '#374151' : '#F3F4F6' }}
                                         >
                                             <View className="flex-row items-center flex-1">
                                                 <View className="w-10 h-10 bg-cnmi-secondary rounded-full items-center justify-center mr-3">
                                                     <Ionicons name="car" size={20} color="white" />
                                                 </View>
                                                 <View className="flex-1">
-                                                    <Text className="font-medium text-cnmi-gray-900">{taxi.driver}</Text>
-                                                    <Text className="text-sm text-cnmi-gray-600">{taxi.price}</Text>
+                                                    <Text 
+                                                        className="font-medium"
+                                                        style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                                                    >
+                                                        {taxi.driver}
+                                                    </Text>
+                                                    <Text 
+                                                        className="text-sm"
+                                                        style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                                                    >
+                                                        {taxi.price}
+                                                    </Text>
                                                 </View>
                                             </View>
                                             <View className="items-end">

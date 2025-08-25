@@ -1,11 +1,13 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function GuideScreen() {
   const insets = useSafeAreaInsets();
+  const { isDarkMode } = useDarkMode();
   const [selectedCategory, setSelectedCategory] = useState('attractions');
 
   const categories = [
@@ -82,14 +84,39 @@ export default function GuideScreen() {
   ];
 
   return (
-    <SafeAreaView className="flex-1 bg-cnmi-gray-50" style={{ paddingTop: insets.top }}>
+    <SafeAreaView 
+      className="flex-1" 
+      style={{ 
+        paddingTop: insets.top,
+        backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
+      }}
+    >
       {/* Header */}
-      <View className="bg-white px-4 py-3 border-b border-cnmi-gray-200">
-        <Text className="text-xl font-bold text-cnmi-gray-900">Visitor Guide</Text>
-        <Text className="text-sm text-cnmi-gray-600">Discover CNMI with local insights</Text>
+      <View 
+        className="px-4 py-3 border-b"
+        style={{
+          backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
+          borderColor: isDarkMode ? '#374151' : '#E5E7EB'
+        }}
+      >
+        <Text 
+          className="text-xl font-bold"
+          style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+        >
+          Visitor Guide
+        </Text>
+        <Text 
+          className="text-sm"
+          style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+        >
+          Discover CNMI with local insights
+        </Text>
       </View>
 
-      <ScrollView className="flex-1">
+      <ScrollView 
+        className="flex-1"
+        style={{ backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}
+      >
         {/* Welcome Card */}
         <CNMICard variant="elevated" className="m-4 bg-gradient-to-r from-cnmi-primary to-cnmi-secondary">
           <View className="items-center py-4">
