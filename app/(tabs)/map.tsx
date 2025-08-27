@@ -5,11 +5,13 @@ import { useCallback, useMemo, useRef, useState } from 'react';
 import {
     Dimensions,
     Image,
+    Keyboard,
     SafeAreaView,
     ScrollView,
     Text,
     TextInput,
     TouchableOpacity,
+    TouchableWithoutFeedback,
     View
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -74,7 +76,7 @@ export default function MapScreen() {
     const [trackingBus, setTrackingBus] = useState<string | null>(null);
     const [transitMode, setTransitMode] = useState<TransitMode>('fixed');
     const [headerHeight, setHeaderHeight] = useState(0);
-    
+
     // Refs
     const bottomSheetRef = useRef<BottomSheet>(null);
 
@@ -129,7 +131,7 @@ export default function MapScreen() {
         const inchOffset = -96; // Move up by approximately 1 inch (96px)
         const screenHeightRatio = SCREEN_HEIGHT / 800; // 800px as baseline
         const dynamicOffset = inchOffset * screenHeightRatio;
-        
+
         return Math.max(0, baseTop + dynamicOffset + SEARCH_BAR_TOP_OFFSET);
     }, [insets.top]);
 
@@ -175,6 +177,10 @@ export default function MapScreen() {
         console.log('handleSheetChanges', index);
     }, []);
 
+    const dismissKeyboard = useCallback(() => {
+        Keyboard.dismiss();
+    }, []);
+
     const getDestinationIcon = useCallback((type: Destination['type']) => {
         const iconMap: Record<Destination['type'], keyof typeof Ionicons.glyphMap> = {
             airport: 'airplane',
@@ -196,16 +202,16 @@ export default function MapScreen() {
 
     return (
         <GestureHandlerRootView className="flex-1">
-            <SafeAreaView 
-                className="flex-1" 
-                style={{ 
+            <SafeAreaView
+                className="flex-1"
+                style={{
                     paddingTop: insets.top,
                     backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
                 }}
             >
                 {/* Header */}
-                <View 
-                    className="px-4 py-1 border-b z-10" 
+                <View
+                    className="px-4 py-1 border-b z-10"
                     style={{
                         backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
                         borderColor: isDarkMode ? '#374151' : '#E5E7EB'
@@ -214,8 +220,8 @@ export default function MapScreen() {
                 >
                     <View className="flex-row items-center justify-between">
                         <View className="flex-row items-center">
-                            <Image 
-                                source={require('@/assets/images/transit.png')} 
+                            <Image
+                                source={require('@/assets/images/transit.png')}
                                 className="w-12 h-12"
                                 resizeMode="contain"
                             />
@@ -236,33 +242,37 @@ export default function MapScreen() {
 
                 {/* Map */}
                 <View className="flex-1 relative">
-                    <MapView
-                        provider={PROVIDER_GOOGLE}
-                        style={{ flex: 1 }}
-                        initialRegion={initialRegion}
-                        showsUserLocation={true}
-                        showsMyLocationButton={false}
-                        showsCompass={false}
-                        toolbarEnabled={false}
-                    >
-                        {busLocations.map((bus) => (
-                            <Marker
-                                key={bus.id}
-                                coordinate={{ latitude: bus.latitude, longitude: bus.longitude }}
-                                anchor={{ x: 0.5, y: 0.5 }}
+                    <TouchableWithoutFeedback onPress={dismissKeyboard}>
+                        <View style={{ flex: 1 }}>
+                            <MapView
+                                provider={PROVIDER_GOOGLE}
+                                style={{ flex: 1 }}
+                                initialRegion={initialRegion}
+                                showsUserLocation={true}
+                                showsMyLocationButton={false}
+                                showsCompass={false}
+                                toolbarEnabled={false}
                             >
-                                <View className="bg-cnmi-primary rounded-full p-2 shadow-lg">
-                                    <Ionicons name="bus" size={20} color="white" />
-                                </View>
-                            </Marker>
-                        ))}
-                    </MapView>
+                                {busLocations.map((bus) => (
+                                    <Marker
+                                        key={bus.id}
+                                        coordinate={{ latitude: bus.latitude, longitude: bus.longitude }}
+                                        anchor={{ x: 0.5, y: 0.5 }}
+                                    >
+                                        <View className="bg-cnmi-primary rounded-full p-2 shadow-lg">
+                                            <Ionicons name="bus" size={20} color="white" />
+                                        </View>
+                                    </Marker>
+                                ))}
+                            </MapView>
+                        </View>
+                    </TouchableWithoutFeedback>
 
                     {/* Search Overlay */}
                     {!selectedDestination && (
-                        <View 
-                            className="absolute z-20" 
-                            style={{ 
+                        <View
+                            className="absolute z-20"
+                            style={{
                                 top: getSearchBarTopPosition(),
                                 left: Math.max(16, SCREEN_WIDTH * SEARCH_BAR_MARGIN_PERCENT),
                                 right: Math.max(16, SCREEN_WIDTH * SEARCH_BAR_MARGIN_PERCENT),
@@ -296,12 +306,12 @@ export default function MapScreen() {
 
                             {/* Search Results */}
                             {showSearchResults && (
-                                <View 
+                                <View
                                     className="mt-2"
                                     style={{ maxHeight: SCREEN_HEIGHT * SEARCH_RESULTS_MAX_HEIGHT_RATIO }}
                                 >
                                     <CNMICard variant="elevated">
-                                        <ScrollView 
+                                        <ScrollView
                                             showsVerticalScrollIndicator={false}
                                             nestedScrollEnabled={true}
                                         >
@@ -329,7 +339,7 @@ export default function MapScreen() {
 
                     {/* Bus Tracking */}
                     {trackingBus && (
-                        <View 
+                        <View
                             className="absolute z-20"
                             style={{
                                 top: getSearchBarTopPosition() + 60,
@@ -398,7 +408,7 @@ export default function MapScreen() {
                     )}
 
                     <View className="px-4 pb-4">
-                        <Text 
+                        <Text
                             className="text-lg font-semibold mb-4"
                             style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                         >
@@ -410,7 +420,7 @@ export default function MapScreen() {
                         {/* Destination Summary */}
                         {selectedDestination && (
                             <View className="my-5">
-                                <Text 
+                                <Text
                                     className="text-base font-semibold"
                                     style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                 >
@@ -418,7 +428,7 @@ export default function MapScreen() {
                                 </Text>
                                 <View className="flex-row items-center mt-1">
                                     <Ionicons name="navigate" size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
-                                    <Text 
+                                    <Text
                                         className="ml-2"
                                         style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                     >
@@ -427,7 +437,7 @@ export default function MapScreen() {
                                 </View>
                             </View>
                         )}
-                                        
+
                         {/* Route Options for Selected Destination */}
                         {selectedDestination && !trackingBus && (
                             <View className="mb-6">
@@ -439,7 +449,7 @@ export default function MapScreen() {
                                         accessibilityRole="button"
                                         accessibilityState={{ selected: transitMode === 'fixed' }}
                                     >
-                                        <View className={`${transitMode === 'fixed' ? 'bg-cnmi-primary' : 'bg-transparent'} py-3 items-center`}> 
+                                        <View className={`${transitMode === 'fixed' ? 'bg-cnmi-primary' : 'bg-transparent'} py-3 items-center`}>
                                             <Text className={`${transitMode === 'fixed' ? 'text-white' : 'text-cnmi-primary'} font-semibold`}>
                                                 Fixed Bus Route
                                             </Text>
@@ -461,7 +471,7 @@ export default function MapScreen() {
 
                                 {transitMode === 'fixed' && (
                                     <View>
-                                        <Text 
+                                        <Text
                                             className="text-lg font-bold mb-3"
                                             style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                         >
@@ -479,13 +489,13 @@ export default function MapScreen() {
                                                         <Ionicons name="bus" size={20} color="white" />
                                                     </View>
                                                     <View className="flex-1">
-                                                        <Text 
+                                                        <Text
                                                             className="font-medium"
                                                             style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                                         >
                                                             {route.route}
                                                         </Text>
-                                                        <Text 
+                                                        <Text
                                                             className="text-sm"
                                                             style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                                         >
@@ -495,7 +505,7 @@ export default function MapScreen() {
                                                 </View>
                                                 <View className="items-end">
                                                     <Text className="font-semibold text-cnmi-primary">{route.nextBus}</Text>
-                                                    <Text 
+                                                    <Text
                                                         className="text-xs"
                                                         style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                                     >
@@ -509,7 +519,7 @@ export default function MapScreen() {
 
                                 {transitMode === 'ride' && (
                                     <View>
-                                        <Text 
+                                        <Text
                                             className="text-lg font-bold mb-3"
                                             style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                         >
@@ -526,13 +536,13 @@ export default function MapScreen() {
                                                         <Ionicons name="car" size={20} color="white" />
                                                     </View>
                                                     <View className="flex-1">
-                                                        <Text 
+                                                        <Text
                                                             className="font-medium"
                                                             style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                                         >
                                                             {taxi.driver}
                                                         </Text>
-                                                        <Text 
+                                                        <Text
                                                             className="text-sm"
                                                             style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                                         >
@@ -558,7 +568,7 @@ export default function MapScreen() {
                             <>
                                 {/* Next Arrivals */}
                                 <View className="mb-6">
-                                    <Text 
+                                    <Text
                                         className="text-lg font-semibold mb-3"
                                         style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                     >
@@ -576,13 +586,13 @@ export default function MapScreen() {
                                                     <Ionicons name="bus" size={20} color="white" />
                                                 </View>
                                                 <View className="flex-1">
-                                                    <Text 
+                                                    <Text
                                                         className="font-medium"
                                                         style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                                     >
                                                         {arrival.route}
                                                     </Text>
-                                                    <Text 
+                                                    <Text
                                                         className="text-sm"
                                                         style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                                     >
@@ -592,7 +602,7 @@ export default function MapScreen() {
                                             </View>
                                             <View className="items-end">
                                                 <Text className="font-semibold text-cnmi-primary">{arrival.time}</Text>
-                                                <Text 
+                                                <Text
                                                     className="text-xs"
                                                     style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                                 >
@@ -605,7 +615,7 @@ export default function MapScreen() {
 
                                 {/* Nearby Taxis */}
                                 <View className="mb-8">
-                                    <Text 
+                                    <Text
                                         className="text-lg font-semibold mb-3"
                                         style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                     >
@@ -622,13 +632,13 @@ export default function MapScreen() {
                                                     <Ionicons name="car" size={20} color="white" />
                                                 </View>
                                                 <View className="flex-1">
-                                                    <Text 
+                                                    <Text
                                                         className="font-medium"
                                                         style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
                                                     >
                                                         {taxi.driver}
                                                     </Text>
-                                                    <Text 
+                                                    <Text
                                                         className="text-sm"
                                                         style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
                                                     >

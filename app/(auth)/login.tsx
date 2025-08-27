@@ -18,7 +18,7 @@ export default function LoginScreen() {
     // TODO: Implement Supabase authentication
     setTimeout(() => {
       setLoading(false);
-      router.replace('/(tabs)');
+      router.replace('/(tabs)/map');
     }, 1000);
   };
 
