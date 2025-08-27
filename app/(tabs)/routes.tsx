@@ -3,14 +3,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import MapView, { PROVIDER_GOOGLE } from 'react-native-maps';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function RoutesScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { isDarkMode } = useDarkMode();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -75,7 +73,7 @@ export default function RoutesScreen() {
   };
 
   return (
-    <SafeAreaView className="flex-1" style={{ paddingTop: insets.top }}>
+    <View className="flex-1">
       {/* Google Maps Background */}
       <View className="absolute inset-0 z-0" style={{ width: '100%', height: '100%' }}>
         <MapView
@@ -256,6 +254,6 @@ export default function RoutesScreen() {
           </View>
         </BlurView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }

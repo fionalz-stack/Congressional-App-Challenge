@@ -4,13 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Modal, SafeAreaView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function TaxiScreen() {
   const router = useRouter();
-  const insets = useSafeAreaInsets();
   const { isDarkMode } = useDarkMode();
   const [pickupLocation, setPickupLocation] = useState('');
   const [destination, setDestination] = useState('');
@@ -67,10 +65,9 @@ export default function TaxiScreen() {
   };
 
   return (
-    <SafeAreaView 
+    <View 
       className="flex-1" 
       style={{ 
-        paddingTop: insets.top,
         backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
       }}
     >
@@ -323,6 +320,6 @@ export default function TaxiScreen() {
           </View>
         </BlurView>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -1,12 +1,10 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, Text, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function GuideScreen() {
-  const insets = useSafeAreaInsets();
   const { isDarkMode } = useDarkMode();
   const [selectedCategory, setSelectedCategory] = useState('attractions');
 
@@ -84,10 +82,9 @@ export default function GuideScreen() {
   ];
 
   return (
-    <SafeAreaView 
+    <View 
       className="flex-1" 
       style={{ 
-        paddingTop: insets.top,
         backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
       }}
     >
@@ -268,6 +265,6 @@ export default function GuideScreen() {
           </View>
         </CNMICard>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }

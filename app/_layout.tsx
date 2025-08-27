@@ -5,9 +5,10 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+
 
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import { DarkModeProvider } from '../contexts/DarkModeContext';
 
 export default function RootLayout() {
@@ -23,18 +24,20 @@ export default function RootLayout() {
 
   return (
     <SafeAreaProvider>
-      <DarkModeProvider>
-        <GluestackUIProvider mode="light">
-          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <Stack>
-              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="+not-found" />
-            </Stack>
-            <StatusBar style="auto" translucent={false} />
-          </ThemeProvider>
-        </GluestackUIProvider>
-      </DarkModeProvider>
+      <SafeAreaView style={{ flex: 1 }} edges={["top", "left", "right"]}>
+        <DarkModeProvider>
+          <GluestackUIProvider mode="light">
+            <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+              <Stack>
+                <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="+not-found" />
+              </Stack>
+              <StatusBar style="auto" translucent={false} />
+            </ThemeProvider>
+          </GluestackUIProvider>
+        </DarkModeProvider>
+      </SafeAreaView>
     </SafeAreaProvider>
   );
 }

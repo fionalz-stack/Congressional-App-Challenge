@@ -6,7 +6,6 @@ import {
     Dimensions,
     Image,
     Keyboard,
-    SafeAreaView,
     ScrollView,
     Text,
     TextInput,
@@ -16,7 +15,6 @@ import {
 } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 
 // Constants
@@ -67,7 +65,6 @@ interface Taxi {
 
 export default function MapScreen() {
     // State
-    const insets = useSafeAreaInsets();
     const { isDarkMode } = useDarkMode();
     const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
     const [searchQuery, setSearchQuery] = useState('');
@@ -127,13 +124,12 @@ export default function MapScreen() {
 
     // Computed values
     const getSearchBarTopPosition = useCallback(() => {
-        const baseTop = insets.top;
         const inchOffset = -96; // Move up by approximately 1 inch (96px)
         const screenHeightRatio = SCREEN_HEIGHT / 800; // 800px as baseline
         const dynamicOffset = inchOffset * screenHeightRatio;
 
-        return Math.max(0, baseTop + dynamicOffset + SEARCH_BAR_TOP_OFFSET);
-    }, [insets.top]);
+        return Math.max(0, dynamicOffset + SEARCH_BAR_TOP_OFFSET);
+    }, []);
 
     const snapPoints = useMemo(() => {
         const margin = 8;
@@ -202,12 +198,9 @@ export default function MapScreen() {
 
     return (
         <GestureHandlerRootView className="flex-1">
-            <SafeAreaView
+            <View 
                 className="flex-1"
-                style={{
-                    paddingTop: insets.top,
-                    backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
-                }}
+                style={{ backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}
             >
                 {/* Header */}
                 <View
@@ -659,7 +652,7 @@ export default function MapScreen() {
                         )}
                     </BottomSheetScrollView>
                 </BottomSheet>
-            </SafeAreaView>
+                </View>
         </GestureHandlerRootView>
     );
 }

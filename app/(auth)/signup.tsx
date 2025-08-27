@@ -2,14 +2,12 @@ import { CNMIButton } from '@/components/ui/CNMIButton';
 import { CNMICard } from '@/components/ui/CNMICard';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { KeyboardAvoidingView, Platform, SafeAreaView, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { KeyboardAvoidingView, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 
 type UserRole = 'passenger' | 'taxi_driver' | 'transit_driver';
 
 export default function SignupScreen() {
-  const insets = useSafeAreaInsets();
   const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -37,10 +35,9 @@ export default function SignupScreen() {
   ];
 
   return (
-    <SafeAreaView 
+    <View 
       className="flex-1" 
       style={{ 
-        paddingTop: insets.top,
         backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
       }}
     >
@@ -148,6 +145,6 @@ export default function SignupScreen() {
           </CNMICard>
         </View>
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </View>
   );
 }

@@ -1,10 +1,11 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Tabs } from 'expo-router';
+
 import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function TabLayout() {
   const { isDarkMode } = useDarkMode();
-  
+
   return (
     <Tabs
       screenOptions={{
