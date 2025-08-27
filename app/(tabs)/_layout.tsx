@@ -29,9 +29,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="map"
         options={{
-          title: 'Map',
+          title: 'Maps',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="map" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="guide"
+        options={{
+          title: 'Guide',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="book" size={size} color={color} />
           ),
         }}
       />
@@ -40,7 +49,7 @@ export default function TabLayout() {
         options={{
           title: 'Routes',
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="bus" size={size} color={color} />
+            <Ionicons name="navigate" size={size} color={color} />
           ),
         }}
       />
@@ -54,15 +63,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="guide"
-        options={{
-          title: 'Guide',
-          tabBarIcon: ({ color, size }) => (
-            <Ionicons name="compass" size={size} color={color} />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
@@ -71,6 +71,7 @@ export default function TabLayout() {
           ),
         }}
       />
+
     </Tabs>
   );
 }

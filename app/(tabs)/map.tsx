@@ -1,10 +1,10 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { Ionicons } from '@expo/vector-icons';
 import BottomSheet, { BottomSheetScrollView } from '@gorhom/bottom-sheet';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { LinearGradient } from 'expo-linear-gradient';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import {
     Dimensions,
-    Image,
     Keyboard,
     ScrollView,
     Text,
@@ -124,11 +124,11 @@ export default function MapScreen() {
 
     // Computed values
     const getSearchBarTopPosition = useCallback(() => {
-        const inchOffset = -96; // Move up by approximately 1 inch (96px)
-        const screenHeightRatio = SCREEN_HEIGHT / 800; // 800px as baseline
-        const dynamicOffset = inchOffset * screenHeightRatio;
+        // Add proper spacing from top to avoid status bar overlap
+        const statusBarHeight = 44; // Typical status bar height
+        const additionalPadding = 40; // Extra padding for better spacing
 
-        return Math.max(0, dynamicOffset + SEARCH_BAR_TOP_OFFSET);
+        return statusBarHeight + additionalPadding;
     }, []);
 
     const snapPoints = useMemo(() => {
@@ -198,40 +198,11 @@ export default function MapScreen() {
 
     return (
         <GestureHandlerRootView className="flex-1">
-            <View 
+            <View
                 className="flex-1"
                 style={{ backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}
             >
-                {/* Header */}
-                <View
-                    className="px-4 py-1 border-b z-10"
-                    style={{
-                        backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                        borderColor: isDarkMode ? '#374151' : '#E5E7EB'
-                    }}
-                    onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
-                >
-                    <View className="flex-row items-center justify-between">
-                        <View className="flex-row items-center">
-                            <Image
-                                source={require('@/assets/images/transit.png')}
-                                className="w-12 h-12"
-                                resizeMode="contain"
-                            />
-                        </View>
-                        <View className="flex-row items-center space-x-2">
-                            <TouchableOpacity
-                                onPress={handleCheckIn}
-                                className="w-10 h-10 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
-                            >
-                                <Ionicons name="checkmark-circle" size={20} color="white" />
-                            </TouchableOpacity>
-                            <TouchableOpacity className="p-2">
-                                <Ionicons name="person-circle" size={32} color="#6B46C1" />
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
+
 
                 {/* Map */}
                 <View className="flex-1 relative">
@@ -260,6 +231,24 @@ export default function MapScreen() {
                             </MapView>
                         </View>
                     </TouchableWithoutFeedback>
+
+                    {/* Top Fade Overlay */}
+                    <LinearGradient
+                        colors={[
+                            isDarkMode ? 'rgba(17, 24, 39, 0.3)' : 'rgba(249, 250, 251, 0.3)',
+                            isDarkMode ? 'rgba(17, 24, 39, 0.1)' : 'rgba(249, 250, 251, 0.1)',
+                            'transparent'
+                        ]}
+                        style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            right: 0,
+                            height: 60,
+                            zIndex: 10,
+                            pointerEvents: 'none'
+                        }}
+                    />
 
                     {/* Search Overlay */}
                     {!selectedDestination && (
@@ -652,7 +641,7 @@ export default function MapScreen() {
                         )}
                     </BottomSheetScrollView>
                 </BottomSheet>
-                </View>
+            </View>
         </GestureHandlerRootView>
     );
 }
