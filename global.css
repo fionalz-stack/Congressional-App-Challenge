@@ -17,14 +17,43 @@
   }
   
   .cnmi-button-primary {
-    @apply bg-cnmi-primary text-white font-semibold py-3 px-4 rounded-lg shadow-sm;
+    @apply bg-cnmi-primary text-white font-semibold py-3 px-4 rounded-lg shadow-sm text-mobile-base;
   }
   
   .cnmi-button-secondary {
-    @apply bg-cnmi-secondary text-white font-semibold py-3 px-4 rounded-lg shadow-sm;
+    @apply bg-cnmi-secondary text-white font-semibold py-3 px-4 rounded-lg shadow-sm text-mobile-base;
   }
   
   .cnmi-input {
-    @apply border border-cnmi-gray-300 rounded-lg px-4 py-3 text-base bg-white;
+    @apply border border-cnmi-gray-300 rounded-lg px-4 py-3 text-mobile-base bg-white;
+  }
+
+  /* Mobile-optimized typography classes */
+  .cnmi-text-display {
+    @apply text-mobile-3xl font-bold leading-tight;
+  }
+  
+  .cnmi-text-title {
+    @apply text-mobile-2xl font-bold leading-tight;
+  }
+  
+  .cnmi-text-heading {
+    @apply text-mobile-xl font-semibold leading-snug;
+  }
+  
+  .cnmi-text-body {
+    @apply text-mobile-base leading-relaxed;
+  }
+  
+  .cnmi-text-body-large {
+    @apply text-mobile-lg leading-relaxed;
+  }
+  
+  .cnmi-text-caption {
+    @apply text-mobile-xs leading-normal;
+  }
+  
+  .cnmi-text-button {
+    @apply text-mobile-base font-semibold leading-none;
   }
 }

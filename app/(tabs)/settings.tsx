@@ -9,7 +9,7 @@ export default function SettingsScreen() {
   const { theme } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [locationEnabled, setLocationEnabled] = React.useState(true);
-  
+
   const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
 
   const SettingItem = ({

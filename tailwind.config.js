@@ -189,16 +189,34 @@ module.exports = {
         },
       },
       fontFamily: {
-        heading: undefined,
-        body: undefined,
-        mono: undefined,
+        // System fonts for better mobile performance and readability
+        heading: ['System', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        body: ['System', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
         roboto: ['Roboto', 'sans-serif'],
       },
       fontWeight: {
         extrablack: '950',
       },
       fontSize: {
+        // Mobile-optimized font sizes
         '2xs': '10px',
+        'xs': '12px',
+        'sm': '14px',
+        'base': '16px',
+        'lg': '18px',
+        'xl': '20px',
+        '2xl': '24px',
+        '3xl': '30px',
+        '4xl': '36px',
+        // Mobile-specific sizes
+        'mobile-xs': '13px',    // Minimum readable size
+        'mobile-sm': '15px',    // Small text
+        'mobile-base': '17px',  // Body text (iOS standard)
+        'mobile-lg': '19px',    // Large body text
+        'mobile-xl': '22px',    // Headings
+        'mobile-2xl': '26px',   // Large headings
+        'mobile-3xl': '32px',   // Display text
       },
       boxShadow: {
         'hard-1': '-2px 2px 8px 0px rgba(38, 38, 38, 0.20)',

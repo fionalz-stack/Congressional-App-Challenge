@@ -8,6 +8,8 @@ import 'react-native-reanimated';
 import { SafeAreaProvider, initialWindowMetrics } from "react-native-safe-area-context";
 
 export default function RootLayout() {
+  // Using system fonts for better performance and readability
+  // SpaceMono kept for code/monospace use cases only
   const [loaded] = useFonts({
     SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
   });
