@@ -20,18 +20,18 @@ export function CNMICard({
   const baseClasses = 'rounded-xl p-4';
   
   const variantClasses = {
-    default: 'bg-white shadow-sm',
-    elevated: 'bg-white shadow-lg',
-    outlined: 'bg-white border border-cnmi-gray-200',
+    default: 'bg-background-0 dark:bg-background-50 shadow-sm',
+    elevated: 'bg-background-0 dark:bg-background-50 shadow-lg',
+    outlined: 'bg-background-0 dark:bg-background-50 border border-outline-200 dark:border-outline-700',
   };
 
   return (
     <View className={cn(baseClasses, variantClasses[variant], className)}>
       {title && (
         <View className="mb-3">
-          <Text className="text-lg font-semibold text-cnmi-gray-900">{title}</Text>
+          <Text className="text-lg font-semibold text-typography-900 dark:text-typography-100">{title}</Text>
           {subtitle && (
-            <Text className="text-sm text-cnmi-gray-600 mt-1">{subtitle}</Text>
+            <Text className="text-sm text-typography-600 dark:text-typography-400 mt-1">{subtitle}</Text>
           )}
         </View>
       )}

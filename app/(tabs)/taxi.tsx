@@ -1,16 +1,16 @@
 import { CNMIButton } from '@/components/ui/CNMIButton';
 import { CNMICard } from '@/components/ui/CNMICard';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function TaxiScreen() {
   const router = useRouter();
-  const { isDarkMode } = useDarkMode();
+  const { theme } = useTheme();
   const [pickupLocation, setPickupLocation] = useState('');
   const [destination, setDestination] = useState('');
   const [selectedTaxi, setSelectedTaxi] = useState<string | null>(null);
@@ -66,87 +66,69 @@ export default function TaxiScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View 
-        className="flex-1" 
-        style={{ 
-          backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
-        }}
-      >
+    <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
+      <View className="flex-1 bg-background-50 dark:bg-background-0">
         {/* Header */}
-        <View 
-          className="px-4 py-3 border-b"
-          style={{
-            backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-            borderColor: isDarkMode ? '#374151' : '#E5E7EB'
-          }}
-        >
-          <Text 
-            className="text-xl font-bold"
-            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-          >
+        <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+          <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
             Call a Taxi
           </Text>
-          <Text 
-            className="text-sm"
-            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-          >
+          <Text className="text-sm text-typography-600 dark:text-typography-400">
             Quick and reliable rides across CNMI
           </Text>
         </View>
 
-        <ScrollView 
-          className="flex-1"
-          style={{ backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}
-        >
+        <ScrollView className="flex-1 bg-background-50 dark:bg-background-0">
           {/* Location Input */}
           <CNMICard variant="elevated" className="m-4">
             <View className="space-y-4">
               <View>
-                <Text 
-                  className="text-sm font-medium mb-2"
-                  style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-                >
+                <Text className="text-sm font-medium mb-2 text-typography-600 dark:text-typography-400">
                   Pickup Location
                 </Text>
-                <View 
-                  className="flex-row items-center rounded-lg px-3 py-3"
-                  style={{ backgroundColor: isDarkMode ? '#374151' : '#F3F4F6' }}
-                >
+                <View className="flex-row items-center rounded-lg px-3 py-3 bg-background-100 dark:bg-background-200">
                   <Ionicons name="location" size={20} color="#6B46C1" />
                   <TextInput
                     value={pickupLocation}
                     onChangeText={setPickupLocation}
                     placeholder="Current location"
-                    placeholderTextColor={isDarkMode ? '#9CA3AF' : '#6B7280'}
-                    className="flex-1 ml-2 text-base"
-                    style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                    placeholderTextColor="#9CA3AF"
+                    className="flex-1 ml-2"
+                    style={{ 
+                      color: theme === 'dark' ? '#F9FAFB' : '#111827',
+                      textAlignVertical: 'center',
+                      paddingVertical: 0,
+                      margin: 0,
+                      height: 40,
+                      fontSize: 16
+                    }}
                   />
                   <TouchableOpacity>
-                    <Ionicons name="locate" size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
+                    <Ionicons name="locate" size={20} color={theme === 'dark' ? '#FFFFFF' : '#6B7280'} />
                   </TouchableOpacity>
                 </View>
               </View>
 
               <View>
-                <Text 
-                  className="text-sm font-medium mb-2"
-                  style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-                >
+                <Text className="text-sm font-medium mb-2 text-typography-600 dark:text-typography-400">
                   Destination
                 </Text>
-                <View 
-                  className="flex-row items-center rounded-lg px-3 py-3"
-                  style={{ backgroundColor: isDarkMode ? '#374151' : '#F3F4F6' }}
-                >
+                <View className="flex-row items-center rounded-lg px-3 py-3 bg-background-100 dark:bg-background-200">
                   <Ionicons name="flag" size={20} color="#F59E0B" />
                   <TextInput
                     value={destination}
                     onChangeText={setDestination}
                     placeholder="Where to?"
-                    placeholderTextColor={isDarkMode ? '#9CA3AF' : '#6B7280'}
-                    className="flex-1 ml-2 text-base"
-                    style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+                    placeholderTextColor="#9CA3AF"
+                    className="flex-1 ml-2"
+                    style={{ 
+                      color: theme === 'dark' ? '#F9FAFB' : '#111827',
+                      textAlignVertical: 'center',
+                      paddingVertical: 0,
+                      margin: 0,
+                      height: 40,
+                      fontSize: 16
+                    }}
                   />
                 </View>
               </View>
@@ -155,10 +137,7 @@ export default function TaxiScreen() {
 
           {/* Quick Destinations */}
           <View className="px-4 mb-4">
-            <Text 
-              className="text-lg font-semibold mb-3"
-              style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-            >
+            <Text className="text-lg font-semibold mb-3 text-typography-900 dark:text-typography-900">
               Popular Destinations
             </Text>
             <View className="flex-row flex-wrap">
@@ -166,17 +145,13 @@ export default function TaxiScreen() {
                 <TouchableOpacity
                   key={index}
                   onPress={() => setDestination(dest.name)}
-                  className="rounded-lg p-3 mr-3 mb-3 flex-row items-center shadow-sm"
+                  className="rounded-lg p-3 mr-3 mb-3 flex-row items-center shadow-sm bg-background-0 dark:bg-background-50"
                   style={{ 
-                    minWidth: '45%',
-                    backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF'
+                    minWidth: '45%'
                   }}
                 >
                   <Ionicons name={dest.icon as any} size={20} color="#6B46C1" />
-                  <Text 
-                    className="text-sm ml-2 flex-1"
-                    style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-                  >
+                  <Text className="text-sm ml-2 flex-1 text-typography-900 dark:text-typography-100">
                     {dest.name}
                   </Text>
                 </TouchableOpacity>
@@ -186,10 +161,7 @@ export default function TaxiScreen() {
 
           {/* Available Taxis */}
           <View className="px-4">
-            <Text 
-              className="text-lg font-semibold mb-3"
-              style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-            >
+            <Text className="text-lg font-semibold mb-3 text-typography-900 dark:text-typography-900">
               Available Taxis
             </Text>
             {availableTaxis.map((taxi) => (
@@ -208,10 +180,7 @@ export default function TaxiScreen() {
                     {/* Driver Info */}
                     <View className="flex-1">
                       <View className="flex-row items-center justify-between mb-1">
-                        <Text 
-                          className="text-lg font-semibold"
-                          style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-                        >
+                        <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
                           {taxi.driver}
                         </Text>
                         <Text className="text-lg font-bold text-cnmi-primary">
@@ -220,31 +189,22 @@ export default function TaxiScreen() {
                       </View>
 
                       <View className="flex-row items-center mb-2">
-                        <Ionicons name="star" size={14} color="#F59E0B" />
-                        <Text 
-                          className="text-sm ml-1"
-                          style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-                        >
+                        <Ionicons name="star" size={14} color="#EAB308" />
+                        <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
                           {taxi.rating} • {taxi.vehicle}
                         </Text>
                       </View>
 
                       <View className="flex-row items-center justify-between">
                         <View className="flex-row items-center">
-                          <Ionicons name="time" size={14} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
-                          <Text 
-                            className="text-sm ml-1"
-                            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-                          >
+                          <Ionicons name="time" size={14} color={theme === 'dark' ? '#FFFFFF' : '#6B7280'} />
+                          <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
                             {taxi.estimatedTime} away
                           </Text>
                         </View>
                         <View className="flex-row items-center">
-                          <Ionicons name="car" size={14} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
-                          <Text 
-                            className="text-sm ml-1"
-                            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-                          >
+                          <Ionicons name="car" size={14} color={theme === 'dark' ? '#FFFFFF' : '#6B7280'} />
+                          <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
                             {taxi.plateNumber}
                           </Text>
                         </View>
@@ -253,10 +213,7 @@ export default function TaxiScreen() {
                   </View>
 
                   {selectedTaxi === taxi.id && (
-                    <View 
-                      className="mt-4 pt-4 border-t"
-                      style={{ borderColor: isDarkMode ? '#374151' : '#F3F4F6' }}
-                    >
+                    <View className="mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
                       <CNMIButton
                         title="Request This Taxi"
                         onPress={handleTaxiRequest}
@@ -272,20 +229,14 @@ export default function TaxiScreen() {
           {/* Emergency Contact */}
           <CNMICard variant="outlined" className="m-4 mb-8">
             <View className="flex-row items-center">
-              <View className="w-10 h-10 bg-red-100 rounded-full items-center justify-center mr-3">
-                <Ionicons name="call" size={20} color="#DC2626" />
+              <View className="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-full items-center justify-center mr-3">
+                <Ionicons name="call" size={20} color={theme === 'dark' ? '#F87171' : '#DC2626'} />
               </View>
               <View className="flex-1">
-                <Text 
-                  className="font-semibold"
-                  style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-                >
+                <Text className="font-semibold text-typography-900 dark:text-typography-100">
                   Emergency Taxi
                 </Text>
-                <Text 
-                  className="text-sm"
-                  style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-                >
+                <Text className="text-sm text-typography-500 dark:text-typography-400">
                   24/7 emergency taxi service
                 </Text>
               </View>
@@ -305,7 +256,7 @@ export default function TaxiScreen() {
         >
           <BlurView 
             intensity={70} 
-            tint={isDarkMode ? "dark" : "light"} 
+            tint="light" 
             className="flex-1 justify-center items-center px-4 z-50"
           >
             <View className="bg-cnmi-primary rounded-3xl p-6 w-full max-w-sm">

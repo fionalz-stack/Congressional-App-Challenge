@@ -1,0 +1,58 @@
+/**
+ * Simple theme toggle component
+ */
+
+import React from 'react';
+import { Text, TouchableOpacity, View } from 'react-native';
+import { useTheme } from '../contexts/ThemeContext';
+
+export function ThemeToggle() {
+  const { theme, preference, setThemePreference } = useTheme();
+
+  const options = [
+    { value: 'system' as const, label: 'System' },
+    { value: 'light' as const, label: 'Light' },
+    { value: 'dark' as const, label: 'Dark' },
+  ];
+
+  return (
+    <View className="flex-row bg-background-50 dark:bg-background-100 rounded-lg p-1">
+      {options.map((option) => (
+        <TouchableOpacity
+          key={option.value}
+          onPress={() => setThemePreference(option.value)}
+          className={`flex-1 py-2 px-3 rounded-md ${
+            preference === option.value
+              ? 'bg-primary-500'
+              : 'bg-transparent'
+          }`}
+        >
+          <Text
+            className={`text-center text-sm font-medium ${
+              preference === option.value
+                ? 'text-white'
+                : 'text-typography-700 dark:text-typography-300'
+            }`}
+          >
+            {option.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+}
+
+export function SimpleThemeToggle() {
+  const { toggleTheme, theme } = useTheme();
+
+  return (
+    <TouchableOpacity
+      onPress={toggleTheme}
+      className="bg-background-50 dark:bg-background-100 p-3 rounded-lg"
+    >
+      <Text className="text-typography-900 dark:text-typography-100 font-medium">
+        {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
+      </Text>
+    </TouchableOpacity>
+  );
+}

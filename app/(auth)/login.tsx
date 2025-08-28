@@ -3,10 +3,8 @@ import { CNMICard } from '@/components/ui/CNMICard';
 import { router } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, Platform, Text, TextInput, View } from 'react-native';
-import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function LoginScreen() {
-  const { isDarkMode } = useDarkMode();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -28,7 +26,7 @@ export default function LoginScreen() {
     <View 
       className="flex-1" 
       style={{ 
-        backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
+        backgroundColor: '#F9FAFB'
       }}
     >
       <KeyboardAvoidingView 
@@ -43,13 +41,13 @@ export default function LoginScreen() {
             </View>
             <Text 
               className="text-2xl font-bold mb-2"
-              style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+              style={{ color: '#111827' }}
             >
               TRANSIT CNMI
             </Text>
             <Text 
               className="text-base text-center"
-              style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+              style={{ color: '#6B7280' }}
             >
               Your island transit companion
             </Text>
@@ -59,7 +57,7 @@ export default function LoginScreen() {
            <CNMICard variant="elevated" className="mb-6">
              <Text 
                className="text-xl font-semibold mb-6 text-center"
-               style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
+               style={{ color: '#111827' }}
              >
                Login
              </Text>
@@ -67,7 +65,7 @@ export default function LoginScreen() {
              <View className="mb-4">
                <Text 
                  className="text-sm font-medium mb-2"
-                 style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                 style={{ color: '#6B7280' }}
                >
                  Email
                </Text>
@@ -75,14 +73,14 @@ export default function LoginScreen() {
                  value={email}
                  onChangeText={setEmail}
                  placeholder="Enter your email"
-                 placeholderTextColor={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                 placeholderTextColor="#6B7280"
                  keyboardType="email-address"
                  autoCapitalize="none"
                  className="border rounded-lg px-4 py-3 text-base"
                  style={{
-                   borderColor: isDarkMode ? '#374151' : '#D1D5DB',
-                   backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                   color: isDarkMode ? '#F9FAFB' : '#111827'
+                   borderColor: '#D1D5DB',
+                   backgroundColor: '#FFFFFF',
+                   color: '#111827'
                  }}
                />
              </View>
@@ -90,7 +88,7 @@ export default function LoginScreen() {
              <View className="mb-6">
                <Text 
                  className="text-sm font-medium mb-2"
-                 style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+                 style={{ color: '#6B7280' }}
                >
                  Password
                </Text>
@@ -98,13 +96,13 @@ export default function LoginScreen() {
                  value={password}
                  onChangeText={setPassword}
                  placeholder="Enter your password"
-                 placeholderTextColor={isDarkMode ? '#9CA3AF' : '#6B7280'}
+                 placeholderTextColor="#6B7280"
                  secureTextEntry
                  className="border rounded-lg px-4 py-3 text-base"
                  style={{
-                   borderColor: isDarkMode ? '#374151' : '#D1D5DB',
-                   backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-                   color: isDarkMode ? '#F9FAFB' : '#111827'
+                   borderColor: '#D1D5DB',
+                   backgroundColor: '#FFFFFF',
+                   color: '#111827'
                  }}
                />
              </View>
@@ -126,7 +124,7 @@ export default function LoginScreen() {
                      {/* Footer */}
            <Text 
              className="text-center text-sm"
-             style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
+             style={{ color: '#6B7280' }}
            >
              Connecting the community, one ride at a time
            </Text>

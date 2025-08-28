@@ -1,13 +1,15 @@
 import { CNMICard } from '@/components/ui/CNMICard';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
 import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function GuideScreen() {
-  const { isDarkMode } = useDarkMode();
+  const { theme } = useTheme();
   const [selectedCategory, setSelectedCategory] = useState('attractions');
+
+  const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
 
   const categories = [
     { id: 'attractions', name: 'Attractions', icon: 'camera' },
@@ -83,39 +85,19 @@ export default function GuideScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View
-        className="flex-1"
-        style={{
-          backgroundColor: isDarkMode ? '#111827' : '#F9FAFB'
-        }}
-      >
+    <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
+      <View className="flex-1 bg-background-50 dark:bg-background-0">
         {/* Header */}
-        <View
-          className="px-4 py-3 border-b"
-          style={{
-            backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF',
-            borderColor: isDarkMode ? '#374151' : '#E5E7EB'
-          }}
-        >
-          <Text
-            className="text-xl font-bold"
-            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-          >
+        <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+          <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
             Visitor Guide
           </Text>
-          <Text
-            className="text-sm"
-            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-          >
+          <Text className="text-sm text-typography-600 dark:text-typography-400">
             Discover CNMI with local insights
           </Text>
         </View>
 
-        <ScrollView
-          className="flex-1"
-          style={{ backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}
-        >
+        <ScrollView className="flex-1 bg-background-50 dark:bg-background-0">
           {/* Welcome Card */}
           <CNMICard variant="elevated" className="m-4 bg-gradient-to-r from-cnmi-primary to-cnmi-secondary">
             <View className="items-center py-4">
@@ -131,7 +113,7 @@ export default function GuideScreen() {
 
           {/* Transit Tips */}
           <View className="px-4 mb-6">
-            <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Transit Tips for Visitors</Text>
+            <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-3">Transit Tips for Visitors</Text>
             {transitTips.map((tip, index) => (
               <CNMICard key={index} variant="default" className="mb-3">
                 <View className="flex-row items-start">
@@ -139,8 +121,8 @@ export default function GuideScreen() {
                     <Ionicons name={tip.icon as any} size={20} color="#6B46C1" />
                   </View>
                   <View className="flex-1">
-                    <Text className="font-semibold text-cnmi-gray-900 mb-1">{tip.title}</Text>
-                    <Text className="text-sm text-cnmi-gray-600">{tip.description}</Text>
+                    <Text className="font-semibold text-typography-900 dark:text-typography-900 mb-1">{tip.title}</Text>
+                    <Text className="text-sm text-typography-600 dark:text-typography-400">{tip.description}</Text>
                   </View>
                 </View>
               </CNMICard>
@@ -160,17 +142,17 @@ export default function GuideScreen() {
                 onPress={() => setSelectedCategory(category.id)}
                 className={`flex-row items-center px-4 py-2 rounded-full mr-3 ${selectedCategory === category.id
                   ? 'bg-cnmi-primary'
-                  : 'bg-white border border-cnmi-gray-200'
+                  : 'bg-background-0 dark:bg-background-50 border border-outline-200 dark:border-outline-700'
                   }`}
               >
                 <Ionicons
                   name={category.icon as any}
                   size={16}
-                  color={selectedCategory === category.id ? 'white' : '#6B7280'}
+                  color={selectedCategory === category.id ? 'white' : iconColor}
                 />
                 <Text className={`ml-2 font-medium ${selectedCategory === category.id
                   ? 'text-white'
-                  : 'text-cnmi-gray-700'
+                  : 'text-typography-700 dark:text-typography-300'
                   }`}>
                   {category.name}
                 </Text>
@@ -180,7 +162,7 @@ export default function GuideScreen() {
 
           {/* Attractions */}
           <View className="px-4 mb-6">
-            <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Must-Visit Attractions</Text>
+            <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-3">Must-Visit Attractions</Text>
             {attractions.map((attraction) => (
               <CNMICard key={attraction.id} variant="elevated" className="mb-4">
                 <View className="flex-row">
@@ -192,18 +174,18 @@ export default function GuideScreen() {
                   {/* Content */}
                   <View className="flex-1">
                     <View className="flex-row items-center justify-between mb-1">
-                      <Text className="text-lg font-semibold text-cnmi-gray-900">
+                      <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
                         {attraction.name}
                       </Text>
                       <View className="flex-row items-center">
-                        <Ionicons name="star" size={14} color="#F59E0B" />
-                        <Text className="text-sm text-cnmi-gray-600 ml-1">
+                        <Ionicons name="star" size={14} color="#EAB308" />
+                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
                           {attraction.rating}
                         </Text>
                       </View>
                     </View>
 
-                    <Text className="text-sm text-cnmi-gray-600 mb-2">
+                    <Text className="text-sm text-typography-600 dark:text-typography-400 mb-2">
                       {attraction.description}
                     </Text>
 
@@ -216,14 +198,14 @@ export default function GuideScreen() {
                       </View>
                     </View>
 
-                    <Text className="text-xs text-cnmi-gray-500 italic">
+                    <Text className="text-xs text-typography-500 dark:text-typography-400 italic">
                       💡 {attraction.tips}
                     </Text>
                   </View>
                 </View>
 
                 {/* Action Buttons */}
-                <View className="flex-row mt-4 pt-4 border-t border-cnmi-gray-100">
+                <View className="flex-row mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
                   <TouchableOpacity className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg">
                     <Ionicons name="map" size={16} color="#6B46C1" />
                     <Text className="text-cnmi-primary font-medium ml-2">Directions</Text>
@@ -239,28 +221,28 @@ export default function GuideScreen() {
 
           {/* Emergency Contacts */}
           <CNMICard variant="outlined" className="m-4 mb-8">
-            <Text className="text-lg font-semibold text-cnmi-gray-900 mb-3">Emergency Contacts</Text>
+            <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-3">Emergency Contacts</Text>
             <View className="space-y-3">
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <Ionicons name="call" size={20} color="#DC2626" />
-                  <Text className="ml-3 text-cnmi-gray-900">Emergency Services</Text>
+                  <Text className="ml-3 text-typography-900 dark:text-typography-900">Emergency Services</Text>
                 </View>
-                <Text className="font-bold text-cnmi-gray-900">911</Text>
+                <Text className="font-bold text-typography-900 dark:text-typography-900">911</Text>
               </View>
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
-                  <Ionicons name="medical" size={20} color="#059669" />
-                  <Text className="ml-3 text-cnmi-gray-900">Tourist Assistance</Text>
+                  <Ionicons name="medical" size={20} color="#16A34A" />
+                  <Text className="ml-3 text-typography-900 dark:text-typography-900">Tourist Assistance</Text>
                 </View>
-                <Text className="font-bold text-cnmi-gray-900">(670) 664-3200</Text>
+                <Text className="font-bold text-typography-900 dark:text-typography-900">(670) 664-3200</Text>
               </View>
               <View className="flex-row items-center justify-between">
                 <View className="flex-row items-center">
                   <Ionicons name="bus" size={20} color="#6B46C1" />
-                  <Text className="ml-3 text-cnmi-gray-900">Transit Info</Text>
+                  <Text className="ml-3 text-typography-900 dark:text-typography-900">Transit Info</Text>
                 </View>
-                <Text className="font-bold text-cnmi-gray-900">(670) 664-4287</Text>
+                <Text className="font-bold text-typography-900 dark:text-typography-900">(670) 664-4287</Text>
               </View>
             </View>
           </CNMICard>

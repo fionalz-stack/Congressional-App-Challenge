@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import { Ionicons } from '@expo/vector-icons';
+import { useTheme } from '@react-navigation/native';
 import React from 'react';
 import { View } from 'react-native';
 
@@ -18,12 +19,14 @@ export function CNMIIcon({
   variant = 'default',
   className 
 }: CNMIIconProps) {
+  const { theme } = useTheme();
+  
   const variantColors = {
-    default: '#6B7280',
+    default: theme === 'dark' ? '#FFFFFF' : '#6B7280',
     primary: '#6B46C1',
     secondary: '#8B5CF6',
     accent: '#3B82F6',
-    stone: '#737373',
+    stone: theme === 'dark' ? '#D1D5DB' : '#737373',
   };
 
   const iconColor = color || variantColors[variant];
@@ -53,7 +56,7 @@ export function CNMIIconButton({
     stone: 'bg-cnmi-gray-300',
   };
 
-  const iconColor = variant === 'default' || variant === 'stone' ? '#6B7280' : 'white';
+  const iconColor = variant === 'default' || variant === 'stone' ? '#6B7280' : '#FFFFFF';
 
   return (
     <View className={cn(

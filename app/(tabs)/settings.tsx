@@ -1,40 +1,42 @@
+import { ThemeToggle } from '@/components/ThemeToggle';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function SettingsScreen() {
-  const { isDarkMode, setDarkMode } = useDarkMode();
+  const { theme } = useTheme();
   const [notificationsEnabled, setNotificationsEnabled] = React.useState(true);
   const [locationEnabled, setLocationEnabled] = React.useState(true);
+  
+  const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
 
-  const SettingItem = ({ 
-    icon, 
-    title, 
-    subtitle, 
+  const SettingItem = ({
+    icon,
+    title,
+    subtitle,
     rightElement,
     onPress
-  }: { 
-    icon: string; 
-    title: string; 
-    subtitle?: string; 
-    rightElement?: React.ReactNode; 
+  }: {
+    icon: string;
+    title: string;
+    subtitle?: string;
+    rightElement?: React.ReactNode;
     onPress?: () => void;
   }) => {
     const content = (
-      <View style={styles.settingItem}>
-        <View style={styles.settingLeft}>
-          <View style={[styles.iconContainer, { backgroundColor: isDarkMode ? '#374151' : '#F3F4F6' }]}>
-            <Ionicons name={icon as any} size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
+      <View className="flex-row items-center justify-between px-5 py-4 border-b border-outline-200 dark:border-outline-700">
+        <View className="flex-row items-center flex-1">
+          <View className="w-10 h-10 rounded-full items-center justify-center mr-4 bg-background-100 dark:bg-background-200">
+            <Ionicons name={icon as any} size={20} color={iconColor} />
           </View>
-          <View style={styles.settingText}>
-            <Text style={[styles.settingTitle, { color: isDarkMode ? '#F9FAFB' : '#111827' }]}>
+          <View className="flex-1">
+            <Text className="text-base font-semibold mb-0.5 text-typography-900 dark:text-typography-900">
               {title}
             </Text>
             {subtitle && (
-              <Text style={[styles.settingSubtitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+              <Text className="text-sm text-typography-600 dark:text-typography-400">
                 {subtitle}
               </Text>
             )}
@@ -56,19 +58,19 @@ export default function SettingsScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <ScrollView style={[styles.container, { backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }]}>
+    <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
+      <ScrollView className="flex-1 bg-background-50 dark:bg-background-0">
         <View style={styles.header}>
-          <Text style={[styles.headerTitle, { color: isDarkMode ? '#F9FAFB' : '#111827' }]}>
+          <Text className="text-3xl font-bold mb-2 text-typography-900 dark:text-typography-900">
             Settings
           </Text>
-          <Text style={[styles.headerSubtitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+          <Text className="text-base text-typography-600 dark:text-typography-400">
             Customize your app experience
           </Text>
         </View>
 
-        <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
-          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+        <View className="mx-5 mb-5 bg-background-0 dark:bg-background-50 rounded-xl overflow-hidden">
+          <Text className="text-sm font-semibold uppercase tracking-wide px-5 pt-5 pb-3 text-typography-600 dark:text-typography-400">
             Notifications
           </Text>
           <SettingItem
@@ -86,8 +88,8 @@ export default function SettingsScreen() {
           />
         </View>
 
-        <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
-          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+        <View className="mx-5 mb-5 bg-background-0 dark:bg-background-50 rounded-xl overflow-hidden">
+          <Text className="text-sm font-semibold uppercase tracking-wide px-5 pt-5 pb-3 text-typography-600 dark:text-typography-400">
             Location
           </Text>
           <SettingItem
@@ -105,36 +107,38 @@ export default function SettingsScreen() {
           />
         </View>
 
-        <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
-          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+        <View className="mx-5 mb-5 bg-background-0 dark:bg-background-50 rounded-xl overflow-hidden">
+          <Text className="text-sm font-semibold uppercase tracking-wide px-5 pt-5 pb-3 text-typography-600 dark:text-typography-400">
             Appearance
           </Text>
-          <SettingItem
-            icon="moon"
-            title="Dark Mode"
-            subtitle="Use dark theme"
-            rightElement={
-              <Switch
-                value={isDarkMode}
-                onValueChange={setDarkMode}
-                trackColor={{ false: '#E5E7EB', true: '#6B46C1' }}
-                thumbColor={isDarkMode ? '#FFFFFF' : '#F9FAFB'}
-              />
-            }
-          />
+          <View className="flex-row items-center justify-between px-5 py-4 border-b border-outline-200 dark:border-outline-700">
+            <View className="flex-row items-center flex-1">
+              <View className="w-10 h-10 rounded-full items-center justify-center mr-4 bg-background-100 dark:bg-background-200">
+                <Ionicons name="moon" size={20} color={iconColor} />
+              </View>
+              <View className="flex-1">
+                <Text className="text-base font-semibold mb-0.5 text-typography-900 dark:text-typography-900">
+                  Theme
+                </Text>
+                <Text className="text-sm text-typography-600 dark:text-typography-400">
+                  Choose your preferred appearance
+                </Text>
+              </View>
+            </View>
+            <ThemeToggle />
+          </View>
           <SettingItem
             icon="language"
             title="Language"
             subtitle="English"
             rightElement={
-              <Ionicons name="chevron-forward" size={20} color={isDarkMode ? '#9CA3AF' : '#6B7280'} />
+              <Ionicons name="chevron-forward" size={20} color={iconColor} />
             }
-            onPress={() => router.push('/(tabs)/language-selection')}
           />
         </View>
 
-        <View style={[styles.section, { backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF' }]}>
-          <Text style={[styles.sectionTitle, { color: isDarkMode ? '#9CA3AF' : '#6B7280' }]}>
+        <View className="mx-5 mb-5 bg-background-0 dark:bg-background-50 rounded-xl overflow-hidden">
+          <Text className="text-sm font-semibold uppercase tracking-wide px-5 pt-5 pb-3 text-typography-600 dark:text-typography-400">
             About
           </Text>
           <SettingItem

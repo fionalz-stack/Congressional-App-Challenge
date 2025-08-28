@@ -67,7 +67,7 @@ export function CNMIButton({
       {loading ? (
         <ActivityIndicator 
           size="small" 
-          color={variant === 'primary' || variant === 'secondary' ? 'white' : '#6B46C1'} 
+          color={variant === 'primary' || variant === 'secondary' ? '#FFFFFF' : '#6B46C1'} 
         />
       ) : (
         <View className="flex-row items-center">

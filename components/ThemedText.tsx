@@ -1,7 +1,5 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
 
-import { useThemeColor } from '@/hooks/useThemeColor';
-
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
@@ -15,12 +13,13 @@ export function ThemedText({
   type = 'default',
   ...rest
 }: ThemedTextProps) {
-  const color = useThemeColor({ light: lightColor, dark: darkColor }, 'text');
-
+  // Use NativeWind classes for theming instead of custom hook
+  const baseClassName = 'text-typography-900 dark:text-typography-100';
+  
   return (
     <Text
+      className={baseClassName}
       style={[
-        { color },
         type === 'default' ? styles.default : undefined,
         type === 'title' ? styles.title : undefined,
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,

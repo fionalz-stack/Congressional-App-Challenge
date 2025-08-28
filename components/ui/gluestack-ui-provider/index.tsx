@@ -1,31 +1,24 @@
-import React, { useEffect } from 'react';
-import { config } from './config';
-import { View, ViewProps } from 'react-native';
 import { OverlayProvider } from '@gluestack-ui/overlay';
 import { ToastProvider } from '@gluestack-ui/toast';
-import { useColorScheme } from 'nativewind';
-
-export type ModeType = 'light' | 'dark' | 'system';
+import React from 'react';
+import { View, ViewProps, useColorScheme } from 'react-native';
+import { config } from './config';
 
 export function GluestackUIProvider({
-  mode = 'light',
+  mode,
   ...props
 }: {
-  mode?: ModeType;
   children?: React.ReactNode;
   style?: ViewProps['style'];
+  mode?: 'light' | 'dark';
 }) {
-  const { colorScheme, setColorScheme } = useColorScheme();
-
-  useEffect(() => {
-    setColorScheme(mode);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode]);
+  const systemColorScheme = useColorScheme();
+  const theme = mode || systemColorScheme || 'light';
 
   return (
     <View
       style={[
-        config[colorScheme!],
+        config[theme],
         { flex: 1, height: '100%', width: '100%' },
         props.style,
       ]}

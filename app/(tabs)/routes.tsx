@@ -1,26 +1,21 @@
 import { CNMICard } from '@/components/ui/CNMICard';
+import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
-import { BlurView } from 'expo-blur';
+
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDarkMode } from '../../contexts/DarkModeContext';
 
 export default function RoutesScreen() {
   const router = useRouter();
-  const { isDarkMode } = useDarkMode();
+  const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
+  
+  const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
 
-  // Saipan coordinates for the map background
-  const initialRegion = {
-    latitude: 15.2137,
-    longitude: 145.7546,
-    latitudeDelta: 0.05,
-    longitudeDelta: 0.05,
-  };
 
   const routes = [
     {
@@ -73,46 +68,43 @@ export default function RoutesScreen() {
   };
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}>
-      <View className="flex-1" style={{ backgroundColor: isDarkMode ? '#111827' : '#F9FAFB' }}>
+    <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
+      <View className="flex-1 bg-background-50 dark:bg-background-0">
 
         {/* Header */}
-        <View
-          className="px-4 py-3 border-b"
-          style={{ 
-            borderColor: isDarkMode ? '#374151' : '#E5E7EB',
-            backgroundColor: isDarkMode ? '#1F2937' : '#FFFFFF'
-          }}
-        >
-          <Text
-            className="text-xl font-bold"
-            style={{ color: isDarkMode ? '#F9FAFB' : '#111827' }}
-          >
+        <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+          <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
             Bus Routes
           </Text>
-          <Text
-            className="text-sm"
-            style={{ color: isDarkMode ? '#9CA3AF' : '#6B7280' }}
-          >
+          <Text className="text-sm text-typography-600 dark:text-typography-400">
             Find your route across CNMI
           </Text>
         </View>
 
         {/* Search Bar */}
-        <BlurView intensity={70} tint="light" className="px-4 py-3 border-b border-cnmi-gray-200 z-10">
-          <View className="flex-row items-center bg-white bg-opacity-80 rounded-lg px-3 py-2">
-            <Ionicons name="search" size={20} color="#6B7280" />
+        <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+          <View className="flex-row items-center rounded-lg px-3 py-2 bg-background-100 dark:bg-background-200">
+            <Ionicons name="search" size={20} color={iconColor} />
             <TextInput
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search routes or destinations..."
-              className="flex-1 ml-2 text-base"
+              placeholderTextColor="#9CA3AF"
+              className="flex-1 ml-2"
+              style={{ 
+                color: theme === 'dark' ? '#F9FAFB' : '#111827',
+                textAlignVertical: 'center',
+                paddingVertical: 0,
+                margin: 0,
+                height: 40,
+                fontSize: 16
+              }}
             />
           </View>
-        </BlurView>
+        </View>
 
         {/* Category Filters */}
-        <BlurView intensity={70} tint="light" className="border-b border-cnmi-gray-200 z-10">
+        <View className="border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
@@ -124,28 +116,28 @@ export default function RoutesScreen() {
                 onPress={() => setSelectedCategory(category.id)}
                 className={`flex-row items-center px-4 py-2 rounded-full mr-3 ${selectedCategory === category.id
                   ? 'bg-cnmi-primary'
-                  : 'bg-cnmi-gray-100'
+                  : 'bg-background-100 dark:bg-background-200'
                   }`}
               >
                 <Ionicons
                   name={category.icon as any}
                   size={16}
-                  color={selectedCategory === category.id ? 'white' : '#6B7280'}
+                  color={selectedCategory === category.id ? 'white' : iconColor}
                 />
                 <Text className={`ml-2 font-medium ${selectedCategory === category.id
                   ? 'text-white'
-                  : 'text-cnmi-gray-700'
+                  : 'text-typography-700 dark:text-typography-300'
                   }`}>
                   {category.name}
                 </Text>
               </TouchableOpacity>
             ))}
           </ScrollView>
-        </BlurView>
+        </View>
 
         {/* Routes List */}
-        <BlurView intensity={70} tint="light" className="flex-1 z-10">
-          <ScrollView className="px-4 py-4">
+        <View className="flex-1">
+          <ScrollView className="px-4 py-4 bg-background-50 dark:bg-background-0">
             {routes.map((route) => (
               <CNMICard key={route.id} variant="elevated" className="mb-4">
                 <View className="flex-row items-start">
@@ -160,30 +152,30 @@ export default function RoutesScreen() {
                   {/* Route Info */}
                   <View className="flex-1">
                     <View className="flex-row items-center justify-between mb-1">
-                      <Text className="text-lg font-semibold text-cnmi-gray-900">
+                      <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
                         {route.name}
                       </Text>
-                      <View className={`px-2 py-1 rounded-full ${route.status === 'On Time' ? 'bg-green-100' : 'bg-yellow-100'
+                      <View className={`px-2 py-1 rounded-full ${route.status === 'On Time' ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900'
                         }`}>
-                        <Text className={`text-xs font-medium ${route.status === 'On Time' ? 'text-green-800' : 'text-yellow-800'
+                        <Text className={`text-xs font-medium ${route.status === 'On Time' ? 'text-green-800 dark:text-green-200' : 'text-yellow-800 dark:text-yellow-200'
                           }`}>
                           {route.status}
                         </Text>
                       </View>
                     </View>
 
-                    <Text className="text-cnmi-gray-600 mb-3">{route.description}</Text>
+                    <Text className="text-typography-600 dark:text-typography-400 mb-3">{route.description}</Text>
 
                     <View className="flex-row items-center justify-between">
                       <View className="flex-row items-center">
-                        <Ionicons name="time" size={16} color="#6B7280" />
-                        <Text className="text-sm text-cnmi-gray-600 ml-1">
+                        <Ionicons name="time" size={16} color={iconColor} />
+                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
                           Next: {route.nextArrival}
                         </Text>
                       </View>
                       <View className="flex-row items-center">
-                        <Ionicons name="refresh" size={16} color="#6B7280" />
-                        <Text className="text-sm text-cnmi-gray-600 ml-1">
+                        <Ionicons name="refresh" size={16} color={iconColor} />
+                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
                           {route.frequency}
                         </Text>
                       </View>
@@ -192,7 +184,7 @@ export default function RoutesScreen() {
                 </View>
 
                 {/* Action Buttons */}
-                <View className="flex-row mt-4 pt-4 border-t border-cnmi-gray-100">
+                <View className="flex-row mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
                   <TouchableOpacity
                     className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
                     onPress={handleViewRoute}
@@ -211,7 +203,7 @@ export default function RoutesScreen() {
               </CNMICard>
             ))}
           </ScrollView>
-        </BlurView>
+        </View>
 
         {/* Check-in Confirmation Modal */}
         <Modal
@@ -220,7 +212,10 @@ export default function RoutesScreen() {
           animationType="fade"
           onRequestClose={() => setShowCheckInModal(false)}
         >
-          <BlurView intensity={80} tint="light" className="flex-1 justify-center items-center px-4 z-50">
+          <View 
+            className="flex-1 justify-center items-center px-4"
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          >
             <View className="bg-cnmi-primary rounded-3xl p-6 w-full max-w-sm">
               <Text className="text-white text-2xl font-bold mb-2 text-center">Check-in confirmed!</Text>
               <Text className="text-white text-lg mb-1 text-center">Your bus driver is on</Text>
@@ -233,7 +228,7 @@ export default function RoutesScreen() {
                 <Text className="text-white font-medium text-lg">Got It!</Text>
               </TouchableOpacity>
             </View>
-          </BlurView>
+          </View>
         </Modal>
       </View>
     </SafeAreaView>
