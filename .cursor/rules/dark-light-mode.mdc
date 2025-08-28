@@ -1,0 +1,114 @@
+---
+alwaysApply: true
+---
+
+# Dark/Light Mode Development Guide
+
+This project uses NativeWind Tailwind tokens and Gluestack UI CSS variables to support accessible light and dark themes.
+
+Key sources:
+
+- [tailwind.config.js](mdc:tailwind.config.js)
+- [components/ui/gluestack-ui-provider/config.ts](mdc:components/ui/gluestack-ui-provider/config.ts)
+- [contexts/ThemeContext.tsx](mdc:contexts/ThemeContext.tsx)
+- [global.css](mdc:global.css)
+
+## Principles
+
+- Prefer semantic Tailwind tokens over hardcoded hex/colors.
+- Use typography/background/outline scale for content and surfaces.
+- Use brand `cnmi.*` colors only for accents and highlights.
+- Ensure dark mode via `dark:` variants; do not branch styles by JS when a Tailwind token exists.
+- Maintain sufficient contrast: headings/body should map to high-contrast tokens by default.
+
+## Approved Token Families
+
+- Text: `text-typography-{0..950}`, plus `dark:text-typography-*`
+- Backgrounds: `bg-background-{0..950}`, `dark:bg-background-*`
+- Borders/Dividers: `border-outline-{0..950}`, `dark:border-outline-*`
+- Brand accents: `text-cnmi-primary`, `bg-cnmi-primary`, `text-cnmi-secondary`, etc.
+- Status: `text-{error|warning|success|info}-*`, `bg-*`, `border-*`
+
+## Do/Don't
+
+- Do: `<Text className="text-typography-900 dark:text-typography-900">`
+- Do: `<View className="bg-background-50 dark:bg-background-0">`
+- Do: `<View className="border-outline-200 dark:border-outline-700 border">`
+- Do: Use `cnmi` colors for CTAs/chips/icons only.
+- Don't: Hardcode hex (e.g., `#111827`, `#F9FAFB`) in components.
+- Don't: Compute colors in JS from `theme` when a Tailwind token exists.
+
+## Icons and Placeholder Text
+
+- Icons: prefer Tailwind `text-*` classes with `currentColor` (where supported) instead of hex.
+- React Native TextInput `placeholderTextColor`: align with `typography-400` for light and `typography-400` in dark; when JS is required, follow:
+
+```tsx
+const placeholder =
+  theme === "dark" ? "#9CA3AF" /* typography-400 */ : "#9CA3AF";
+<TextInput placeholderTextColor={placeholder} />;
+```
+
+If possible, prefer a wrapper component to centralize this.
+
+## Accessiblity Defaults
+
+- Headings: `text-typography-900 dark:text-typography-900`
+- Body: `text-typography-700 dark:text-typography-300`
+- Secondary/meta: `text-typography-600 dark:text-typography-400`
+- Surfaces: `bg-background-0` (cards) or `bg-background-50`; dark: `bg-background-50` or `bg-background-0` respectively
+- Dividers: `border-outline-200 dark:border-outline-700`
+
+## Using Theme Programmatically
+
+Only use `useTheme()` for logic that cannot be expressed with Tailwind variants (e.g., dynamic map provider choice). Avoid using it to set inline colors.
+
+Example acceptable use:
+
+```tsx
+const { theme } = useTheme();
+const mapProvider = Platform.OS === "ios" ? PROVIDER_DEFAULT : PROVIDER_GOOGLE;
+```
+
+## Example Patterns
+
+Heading and section:
+
+```tsx
+<View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+  <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
+    Title
+  </Text>
+  <Text className="text-sm text-typography-600 dark:text-typography-400">
+    Subtitle
+  </Text>
+</View>
+```
+
+List item with icon and action:
+
+```tsx
+<TouchableOpacity className="flex-row items-center py-3 border-b border-outline-200 dark:border-outline-700">
+  <Ionicons name="location" size={20} color={undefined} />
+  <Text className="ml-3 flex-1 text-base font-medium text-typography-900 dark:text-typography-900">
+    Item
+  </Text>
+  <Text className="text-sm text-typography-500 dark:text-typography-400">
+    Meta
+  </Text>
+</TouchableOpacity>
+```
+
+CTA button:
+
+```tsx
+<TouchableOpacity className="bg-cnmi-primary rounded-lg px-4 py-2">
+  <Text className="text-white font-semibold">Continue</Text>
+</TouchableOpacity>
+```
+
+## Migration Tips
+
+- Replace hex colors with the closest semantic token.
+- For icons given hex values, swap to `text-cnmi-primary` or `text-typography-*` and omit `color` prop when possible.
+- Keep using `CNMICard` components which already align with tokens.
