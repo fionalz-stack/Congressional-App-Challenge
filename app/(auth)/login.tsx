@@ -1,33 +1,27 @@
 import { CNMIButton } from "@/components/ui/CNMIButton";
-import { CNMICard } from "@/components/ui/CNMICard";
-import { useTheme } from "@/contexts/ThemeContext";
 import { router } from "expo-router";
 import { useState } from "react";
 import {
+  Image,
   KeyboardAvoidingView,
   Platform,
   Text,
-  TextInput,
   View,
 } from "react-native";
 
 export default function LoginScreen() {
-  const { theme } = useTheme();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const handleLogin = async () => {
-    setLoading(true);
-    // TODO: Implement Supabase authentication
-    setTimeout(() => {
-      setLoading(false);
-      router.replace("/(tabs)/map");
-    }, 1000);
+  const handleDriverLogin = () => {
+    router.push({ pathname: "/(auth)/signup", params: { role: "driver" } as any });
   };
 
-  const handleSignUp = () => {
-    router.push("/(auth)/signup");
+  const handleTaxiLogin = () => {
+    router.push({ pathname: "/(auth)/signup", params: { role: "taxi" } as any });
+  };
+
+  const handleContinueAsUser = () => {
+    router.replace("/(tabs)/map");
   };
 
   return (
@@ -39,88 +33,41 @@ export default function LoginScreen() {
         <View className="flex-1 justify-center px-6">
           {/* Logo and Header */}
           <View className="items-center mb-8">
-            <View className="w-20 h-20 bg-cnmi-primary rounded-2xl items-center justify-center mb-4">
-              <Text className="text-white text-4xl">🚌</Text>
-            </View>
-            <Text className="mb-2 text-center text-2xl font-bold text-typography-900 dark:text-typography-100">
-              TRANSIT CNMI
-            </Text>
+            <Image
+              source={require("../../assets/images/transit.png")}
+              style={{ width: 120, height: 120, borderRadius: 24, marginBottom: 4 }}
+              resizeMode="contain"
+              accessibilityLabel="SPN Transit logo"
+            />
+            
             <Text className="text-center text-typography-600 dark:text-typography-400">
-              Your island transit companion
             </Text>
           </View>
 
-          {/* Login Form */}
-          <CNMICard variant="elevated" className="mb-6">
-            <Text className="mb-6 text-center text-xl font-semibold text-typography-900 dark:text-typography-100">
-              Login
-            </Text>
-
-            <View className="mb-4">
-              <Text className="mb-2 text-typography-700 dark:text-typography-300">
-                Email
-              </Text>
-              <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder="Enter your email"
-                placeholderTextColor={theme === "dark" ? "#9CA3AF" : "#6B7280"}
-                keyboardType="email-address"
-                textContentType="emailAddress"
-                autoComplete="email"
-                autoCorrect={false}
-                keyboardAppearance={theme === "dark" ? "dark" : "light"}
-                cursorColor={theme === "dark" ? "#F9FAFB" : "#111827"}
-                selectionColor={theme === "dark" ? "#6B46C1" : "#6B46C1"}
-                autoCapitalize="none"
-                className="border border-outline-300 dark:border-outline-600 rounded-lg px-4 py-3 bg-background-0 dark:bg-background-50"
-                style={{
-                  fontSize: 17,
-                  color: theme === "dark" ? "#F9FAFB" : "#111827",
-                }}
-              />
+          {/* Role Selection */}
+          <View className="items-center">
+            <View style={{ width: 320 }}>
+              <View className="flex flex-col gap-6">
+                <CNMIButton
+                  title="Driver Login"
+                  onPress={handleDriverLogin}
+                  variant="outline"
+                />
+                <CNMIButton
+                  title="Taxi Login"
+                  onPress={handleTaxiLogin}
+                  variant="outline"
+                />
+                <CNMIButton
+                  title="Continue as User"
+                  onPress={handleContinueAsUser}
+                />
+              </View>
             </View>
-
-            <View className="mb-6">
-              <Text className="mb-2 text-typography-700 dark:text-typography-300">
-                Password
-              </Text>
-              <TextInput
-                value={password}
-                onChangeText={setPassword}
-                placeholder="Enter your password"
-                placeholderTextColor={theme === "dark" ? "#9CA3AF" : "#6B7280"}
-                secureTextEntry
-                textContentType="password"
-                autoComplete="password"
-                autoCorrect={false}
-                keyboardAppearance={theme === "dark" ? "dark" : "light"}
-                cursorColor={theme === "dark" ? "#F9FAFB" : "#111827"}
-                selectionColor={theme === "dark" ? "#6B46C1" : "#6B46C1"}
-                className="border border-outline-300 dark:border-outline-600 rounded-lg px-4 py-3 bg-background-0 dark:bg-background-50"
-                style={{
-                  fontSize: 17,
-                  color: theme === "dark" ? "#F9FAFB" : "#111827",
-                }}
-              />
-            </View>
-
-            <CNMIButton
-              title="Login"
-              onPress={handleLogin}
-              loading={loading}
-              className="mb-4"
-            />
-
-            <CNMIButton
-              title="Create Account"
-              onPress={handleSignUp}
-              variant="outline"
-            />
-          </CNMICard>
+          </View>
 
           {/* Footer */}
-          <Text className="text-center text-sm text-typography-600 dark:text-typography-400">
+          <Text className="text-center text-sm text-typography-600 dark:text-typography-400 mt-8">
             Connecting the community, one ride at a time
           </Text>
         </View>
