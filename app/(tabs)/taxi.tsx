@@ -5,7 +5,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { BlurView } from 'expo-blur';
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Alert, Linking, Modal, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function TaxiScreen() {
@@ -15,6 +15,7 @@ export default function TaxiScreen() {
   const [destination, setDestination] = useState('');
   const [selectedTaxi, setSelectedTaxi] = useState<string | null>(null);
   const [showTaxiRequestModal, setShowTaxiRequestModal] = useState(false);
+  const [showEmergencyConfirmModal, setShowEmergencyConfirmModal] = useState(false);
 
   const availableTaxis = [
     {
@@ -65,6 +66,29 @@ export default function TaxiScreen() {
     router.push('/map');
   };
 
+  const handleEmergencyCall = () => {
+    setShowEmergencyConfirmModal(true);
+  };
+
+  const handleConfirmEmergencyCall = async () => {
+    setShowEmergencyConfirmModal(false);
+    try {
+      const url = 'tel:911';
+      const supported = await Linking.canOpenURL(url);
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert('Error', 'Phone calls are not supported on this device');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to make emergency call');
+    }
+  };
+
+  const handleCancelEmergencyCall = () => {
+    setShowEmergencyConfirmModal(false);
+  };
+
   return (
     <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
       <View className="flex-1 bg-background-50 dark:bg-background-0">
@@ -81,59 +105,57 @@ export default function TaxiScreen() {
         <ScrollView className="flex-1 bg-background-50 dark:bg-background-0">
           {/* Location Input */}
           <CNMICard variant="elevated" className="m-4">
-            <View className="space-y-4">
-              <View>
-                <Text className="text-sm font-medium mb-2 text-typography-600 dark:text-typography-400">
-                  Pickup Location
-                </Text>
-                <View className="flex-row items-center rounded-lg px-3 py-3 bg-background-100 dark:bg-background-200">
-                  <Ionicons name="location" size={20} color="#6B46C1" />
-                  <TextInput
-                    value={pickupLocation}
-                    onChangeText={setPickupLocation}
-                    placeholder="Current location"
-                    placeholderTextColor="#9CA3AF"
-                    className="flex-1 ml-2"
-                    style={{ 
-                      color: theme === 'dark' ? '#F9FAFB' : '#111827',
-                      textAlignVertical: 'center',
-                      paddingVertical: 0,
-                      margin: 0,
-                      height: 40,
-                      fontSize: 16
-                    }}
-                  />
-                  <TouchableOpacity>
-                    <Ionicons name="locate" size={20} color={theme === 'dark' ? '#FFFFFF' : '#6B7280'} />
-                  </TouchableOpacity>
-                </View>
-              </View>
+  <View className="space-y-4">
+    {/* Pickup */}
+    <View>
+      <Text className="text-sm font-medium mb-2 text-typography-600 dark:text-typography-400">
+        Pickup Location
+      </Text>
+      <View className="flex-row items-center rounded-lg px-3 py-3 bg-background-100 dark:bg-background-200">
+        <Ionicons name="location" size={20} color="#6B46C1" />
+        <TextInput
+          value={pickupLocation}
+          onChangeText={setPickupLocation}
+          placeholder="Current location"
+          placeholderTextColor="#9CA3AF"
+          className="flex-1 ml-2 text-base text-typography-900 dark:text-typography-900"
+          style={{ height: 40 }}
+          multiline={false}
+          numberOfLines={1}
+          scrollEnabled={false}
+        />
+        <TouchableOpacity>
+          <Ionicons
+            name="locate"
+            size={20}
+            color={theme === 'dark' ? '#FFFFFF' : '#6B7280'}
+          />
+        </TouchableOpacity>
+      </View>
+    </View>
 
-              <View>
-                <Text className="text-sm font-medium mb-2 text-typography-600 dark:text-typography-400">
-                  Destination
-                </Text>
-                <View className="flex-row items-center rounded-lg px-3 py-3 bg-background-100 dark:bg-background-200">
-                  <Ionicons name="flag" size={20} color="#F59E0B" />
-                  <TextInput
-                    value={destination}
-                    onChangeText={setDestination}
-                    placeholder="Where to?"
-                    placeholderTextColor="#9CA3AF"
-                    className="flex-1 ml-2"
-                    style={{ 
-                      color: theme === 'dark' ? '#F9FAFB' : '#111827',
-                      textAlignVertical: 'center',
-                      paddingVertical: 0,
-                      margin: 0,
-                      height: 40,
-                      fontSize: 16
-                    }}
-                  />
-                </View>
-              </View>
-            </View>
-          </CNMICard>
+    {/* Destination */}
+    <View>
+      <Text className="text-sm font-medium mb-2 text-typography-600 dark:text-typography-400">
+        Destination
+      </Text>
+      <View className="flex-row items-center rounded-lg px-3 py-3 bg-background-100 dark:bg-background-200">
+        <Ionicons name="flag" size={20} color="#F59E0B" />
+        <TextInput
+          value={destination}
+          onChangeText={setDestination}
+          placeholder="Where to?"
+          placeholderTextColor="#9CA3AF"
+          className="flex-1 ml-2 text-base text-typography-900 dark:text-typography-900"
+          style={{ height: 40 }}
+          multiline={false}
+          numberOfLines={1}
+          scrollEnabled={false}
+        />
+      </View>
+    </View>
+  </View>
+</CNMICard>
 
           {/* Quick Destinations */}
           <View className="px-4 mb-4">
@@ -243,13 +265,16 @@ export default function TaxiScreen() {
                   className="font-semibold text-typography-900"
                   style={{ color: theme === 'dark' ? '#FFFFFF' : undefined }}
                 >
-                  Emergency Taxi
+                  Emergency 
                 </Text>
                 <Text className="text-sm text-typography-500 dark:text-typography-400">
-                  24/7 emergency taxi service
+                  24/7 emergency services
                 </Text>
               </View>
-              <TouchableOpacity className="bg-red-600 px-4 py-2 rounded-lg">
+              <TouchableOpacity 
+                className="bg-red-600 px-4 py-2 rounded-lg"
+                onPress={handleEmergencyCall}
+              >
                 <Text className="text-white font-medium">CALL</Text>
               </TouchableOpacity>
             </View>
@@ -260,25 +285,147 @@ export default function TaxiScreen() {
         <Modal
           visible={showTaxiRequestModal}
           transparent={true}
-          animationType="fade"
+          animationType="slide"
           onRequestClose={() => setShowTaxiRequestModal(false)}
         >
           <BlurView 
-            intensity={70} 
-            tint="light" 
+            intensity={80} 
+            tint={theme === 'dark' ? 'dark' : 'light'} 
+            className="flex-1 justify-end"
+          >
+            <View className="bg-background-0 dark:bg-background-50 rounded-t-3xl px-6 pt-8 pb-10 mx-0 shadow-2xl border-t border-outline-200 dark:border-outline-700">
+              {/* Success Indicator */}
+              <View className="items-center mb-6">
+                <View className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full items-center justify-center mb-4 shadow-lg">
+                  <View className="w-16 h-16 bg-green-500 rounded-full items-center justify-center">
+                    <Ionicons name="checkmark" size={32} color="white" />
+                  </View>
+                </View>
+                
+                <Text className="text-2xl font-bold text-center mb-2 text-typography-900 dark:text-typography-900">
+                  Ride confirmed
+                </Text>
+                <Text className="text-base text-center text-typography-600 dark:text-typography-400 leading-5">
+                  Your driver is on the way
+                </Text>
+              </View>
+
+              {/* Driver Info Card */}
+              {selectedTaxi && (
+                <View className="bg-background-50 dark:bg-background-100 rounded-2xl p-4 mb-6 border border-outline-200 dark:border-outline-700">
+                  <View className="flex-row items-center">
+                    <View className="w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center mr-4">
+                      <Ionicons name="person" size={24} color="white" />
+                    </View>
+                    
+                    <View className="flex-1">
+                      <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-1">
+                        {availableTaxis.find(t => t.id === selectedTaxi)?.driver}
+                      </Text>
+                      <View className="flex-row items-center">
+                        <Ionicons name="star" size={14} color="#EAB308" />
+                        <Text className="text-sm ml-1 text-typography-600 dark:text-typography-400">
+                          {availableTaxis.find(t => t.id === selectedTaxi)?.rating} • {availableTaxis.find(t => t.id === selectedTaxi)?.vehicle}
+                        </Text>
+                      </View>
+                      <Text className="text-sm text-typography-500 dark:text-typography-400 mt-1">
+                        {availableTaxis.find(t => t.id === selectedTaxi)?.plateNumber}
+                      </Text>
+                    </View>
+                    
+                    <View className="items-end">
+                      <Text className="text-lg font-bold text-cnmi-primary mb-1">
+                        {availableTaxis.find(t => t.id === selectedTaxi)?.estimatedTime}
+                      </Text>
+                      <Text className="text-sm text-typography-500 dark:text-typography-400">
+                        away
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              )}
+
+              {/* Action Buttons */}
+              <View>
+                <TouchableOpacity 
+                  className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
+                  onPress={handleGotIt}
+                  style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
+                >
+                  <Text className="text-white font-semibold text-lg mr-2">View on Map</Text>
+                  <Ionicons name="arrow-forward" size={20} color="white" />
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  className="bg-background-100 dark:bg-background-200 rounded-2xl py-4 px-6 border border-outline-200 dark:border-outline-700"
+                  onPress={() => setShowTaxiRequestModal(false)}
+                >
+                  <Text className="text-typography-700 dark:text-typography-300 font-medium text-center text-lg">
+                    Stay Here
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Cancel Option */}
+              <TouchableOpacity 
+                className="mt-4 py-2"
+                onPress={() => {
+                  setShowTaxiRequestModal(false);
+                  // You can add cancel ride logic here
+                }}
+              >
+                <Text className="text-center text-sm text-typography-500 dark:text-typography-400 underline">
+                  Cancel ride
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </BlurView>
+        </Modal>
+
+        {/* Emergency Call Confirmation Modal */}
+        <Modal
+          visible={showEmergencyConfirmModal}
+          transparent={true}
+          animationType="fade"
+          onRequestClose={handleCancelEmergencyCall}
+        >
+          <BlurView 
+            intensity={80} 
+            tint="dark" 
             className="flex-1 justify-center items-center px-4 z-50"
           >
-            <View className="bg-cnmi-primary rounded-3xl p-6 w-full max-w-sm">
-              <Text className="text-white text-2xl font-bold mb-2 text-center">Taxi requested!</Text>
-              <Text className="text-white text-lg mb-1 text-center">Your taxi driver is on</Text>
-              <Text className="text-white text-lg mb-6 text-center">the way.</Text>
+            <View className="bg-background-0 dark:bg-background-50 rounded-3xl p-6 w-full max-w-sm border border-outline-200 dark:border-outline-700">
+              <View className="items-center mb-6">
+                <View className="w-16 h-16 bg-red-100 dark:bg-red-900 rounded-full items-center justify-center mb-4">
+                  <Ionicons name="warning" size={32} color="#DC2626" />
+                </View>
+                <Text className="text-xl font-bold text-center mb-2 text-typography-900 dark:text-typography-900">
+                  Emergency Call
+                </Text>
+                <Text className="text-base text-center text-typography-600 dark:text-typography-400">
+                  Are you sure you want to call 911 emergency services?
+                </Text>
+              </View>
               
-              <TouchableOpacity 
-                className="bg-purple-700 rounded-full py-3 px-8 self-center"
-                onPress={handleGotIt}
-              >
-                <Text className="text-white font-medium text-lg">Got It!</Text>
-              </TouchableOpacity>
+              <View className="flex-row">
+                <TouchableOpacity 
+                  className="flex-1 bg-background-100 dark:bg-background-200 rounded-lg py-3 px-4 border border-outline-200 dark:border-outline-700 mr-3"
+                  onPress={handleCancelEmergencyCall}
+                >
+                  <Text className="text-center font-medium text-typography-700 dark:text-typography-300">
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  className="flex-1 bg-red-600 rounded-lg py-3 px-4"
+                  onPress={handleConfirmEmergencyCall}
+                >
+                  <Text className="text-center font-medium text-white">
+                    Call 911
+                  </Text>
+                </TouchableOpacity>
+              </View>
             </View>
           </BlurView>
         </Modal>
