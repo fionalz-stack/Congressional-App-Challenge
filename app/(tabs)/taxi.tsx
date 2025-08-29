@@ -137,7 +137,10 @@ export default function TaxiScreen() {
 
           {/* Quick Destinations */}
           <View className="px-4 mb-4">
-            <Text className="text-lg font-semibold mb-3 text-typography-900 dark:text-typography-900">
+            <Text 
+              className="text-lg font-semibold mb-3 text-typography-900"
+              style={{ color: theme === 'dark' ? '#FFFFFF' : undefined }}
+            >
               Popular Destinations
             </Text>
             <View className="flex-row flex-wrap">
@@ -151,7 +154,10 @@ export default function TaxiScreen() {
                   }}
                 >
                   <Ionicons name={dest.icon as any} size={20} color="#6B46C1" />
-                  <Text className="text-sm ml-2 flex-1 text-typography-900 dark:text-typography-100">
+                  <Text 
+                    className="text-sm ml-2 flex-1 text-typography-900"
+                    style={{ color: theme === 'dark' ? '#FFFFFF' : undefined }}
+                  >
                     {dest.name}
                   </Text>
                 </TouchableOpacity>
@@ -233,7 +239,10 @@ export default function TaxiScreen() {
                 <Ionicons name="call" size={20} color={theme === 'dark' ? '#F87171' : '#DC2626'} />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-typography-900 dark:text-typography-100">
+                <Text 
+                  className="font-semibold text-typography-900"
+                  style={{ color: theme === 'dark' ? '#FFFFFF' : undefined }}
+                >
                   Emergency Taxi
                 </Text>
                 <Text className="text-sm text-typography-500 dark:text-typography-400">
