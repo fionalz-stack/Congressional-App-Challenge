@@ -89,15 +89,6 @@ export default function GuideScreen() {
 
   const shopping = [
     {
-      id: 's1',
-      name: 'T Galleria by DFS',
-      description: 'Duty-free shopping for luxury brands',
-      category: 'Mall',
-      transitInfo: 'Route 12 - Garapan',
-      image: '🛍️',
-      tips: 'Bring ID for duty-free purchases.'
-    },
-    {
       id: 's2',
       name: 'Joeten Shopping Center',
       description: 'Groceries and essentials in one place',
@@ -105,6 +96,24 @@ export default function GuideScreen() {
       transitInfo: 'Route 8 - Susupe',
       image: '🛒',
       tips: 'Best spot to stock up on snacks and water.'
+    },
+    {
+      id: 's3',
+      name: 'I Love Saipan',
+      description: 'Iconic souvenir shop with local gifts and apparel',
+      category: 'Shopping',
+      transitInfo: 'Route 10 - Garapan Shopping District',
+      image: '🎁',
+      tips: 'Check bundle deals and local-made crafts near checkout.'
+    },
+    {
+      id: 's4',
+      name: 'ABC Stores',
+      description: 'Convenience chain with snacks, drinks, and souvenirs',
+      category: 'Convenience',
+      transitInfo: 'Route 10 - Multiple locations around Garapan',
+      image: '🛍️',
+      tips: 'Open late—grab water and sunscreen before beach trips.'
     }
   ];
 
