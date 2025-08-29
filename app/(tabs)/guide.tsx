@@ -176,17 +176,25 @@ export default function GuideScreen() {
 
         <ScrollView className="flex-1 bg-background-50 dark:bg-background-0">
           {/* Welcome Card */}
-          <CNMICard variant="elevated" className="m-4 bg-gradient-to-r from-cnmi-primary to-cnmi-secondary">
-            <View className="items-center py-4">
-              <Text className="text-2xl mb-2">🌺</Text>
-              <Text className="text-xl font-bold text-cnmi-primary dark:text-white text-center mb-2">
-                Hafa Adai! Welcome to CNMI
-              </Text>
-              <Text className="text-cnmi-black dark:text-cnmi-light text-center">
-                Your island adventure starts here. Let us help you explore the beauty of the Northern Mariana Islands.
-              </Text>
+          <View className="mx-4 mt-4 mb-6 bg-white dark:bg-background-50 rounded-3xl shadow-sm border border-outline-100 dark:border-outline-800"
+                style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.04, shadowRadius: 8 }}>
+            <View className="px-6 py-8">
+              <View className="items-center mb-6">
+                <View className="w-16 h-16 bg-cnmi-primary/10 dark:bg-cnmi-primary/20 rounded-full items-center justify-center mb-4">
+                  <Text className="text-3xl">🌺</Text>
+                </View>
+                <Text className="text-2xl font-bold text-typography-900 dark:text-typography-900 text-center mb-2">
+                  Hafa Adai!
+                </Text>
+                <Text className="text-lg font-medium text-cnmi-primary dark:text-cnmi-primary text-center mb-3">
+                  Welcome to CNMI
+                </Text>
+                <Text className="text-typography-600 dark:text-typography-400 text-center text-base leading-6 max-w-sm">
+                  Your island adventure starts here. Let us help you explore the beauty of the Northern Mariana Islands.
+                </Text>
+              </View>
             </View>
-          </CNMICard>
+          </View>
 
           {/* Transit Tips */}
           <View className="px-4 mb-6">
