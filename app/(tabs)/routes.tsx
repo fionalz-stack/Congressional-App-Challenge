@@ -252,16 +252,20 @@ export default function RoutesScreen() {
             className="flex-1 justify-center items-center px-4"
             style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
           >
-            <View className="bg-cnmi-primary rounded-3xl p-6 w-full max-w-sm">
-              <Text className="text-white text-2xl font-bold mb-2 text-center">Check-in confirmed!</Text>
-              <Text className="text-white text-lg mb-1 text-center">Your bus driver is on</Text>
-              <Text className="text-white text-lg mb-6 text-center">the way.</Text>
+            <View className="bg-background-0 dark:bg-background-50 rounded-3xl p-6 w-full max-w-sm items-center">
+              <View className="w-20 h-20 rounded-full bg-cnmi-light items-center justify-center mb-4">
+                <Text className="text-4xl">😊</Text>
+              </View>
+
+              <Text className="text-xl font-bold text-typography-900 dark:text-typography-900 mb-2 text-center">Check-in confirmed!</Text>
+              <Text className="text-base text-typography-700 dark:text-typography-300 text-center">Your bus driver is on</Text>
+              <Text className="text-base text-typography-700 dark:text-typography-300 mb-6 text-center">the way.</Text>
 
               <TouchableOpacity
-                className="bg-purple-700 rounded-full py-3 px-8 self-center"
+                className="bg-cnmi-primary rounded-full py-3 px-8 w-full"
                 onPress={() => setShowCheckInModal(false)}
               >
-                <Text className="text-white font-medium text-lg">Got It!</Text>
+                <Text className="text-white font-semibold text-center">Got It!</Text>
               </TouchableOpacity>
             </View>
           </View>
