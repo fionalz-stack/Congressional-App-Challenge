@@ -290,8 +290,8 @@ export default function GuideScreen() {
                     <Text className="text-cnmi-primary font-medium ml-2">Directions</Text>
                   </TouchableOpacity>
                   <TouchableOpacity className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg">
-                    <Ionicons name="bus" size={16} color="white" />
-                    <Text className="text-white font-medium ml-2">Plan Trip</Text>
+                    <Ionicons name={selectedCategory === 'dining' ? 'calendar' : 'bus'} size={16} color="white" />
+                    <Text className="text-white font-medium ml-2">{selectedCategory === 'dining' ? 'Reserve' : 'Plan Trip'}</Text>
                   </TouchableOpacity>
                 </View>
               </CNMICard>
