@@ -102,10 +102,10 @@ export default function GuideScreen() {
           <CNMICard variant="elevated" className="m-4 bg-gradient-to-r from-cnmi-primary to-cnmi-secondary">
             <View className="items-center py-4">
               <Text className="text-2xl mb-2">🌺</Text>
-              <Text className="text-xl font-bold text-white text-center mb-2">
+              <Text className="text-xl font-bold text-cnmi-primary dark:text-white text-center mb-2">
                 Hafa Adai! Welcome to CNMI
               </Text>
-              <Text className="text-cnmi-light text-center">
+              <Text className="text-cnmi-black dark:text-cnmi-light text-center">
                 Your island adventure starts here. Let us help you explore the beauty of the Northern Mariana Islands.
               </Text>
             </View>
