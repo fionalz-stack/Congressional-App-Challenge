@@ -24,7 +24,6 @@ export default function GuideScreen() {
       name: 'American Memorial Park',
       description: 'Beautiful park commemorating WWII battles',
       category: 'Park',
-      rating: 4.8,
       transitInfo: 'Route 8, 12 - Stop: Memorial Park',
       image: '🌳',
       tips: 'Best visited in the morning. Free entry.'
@@ -34,7 +33,6 @@ export default function GuideScreen() {
       name: 'Managaha Island',
       description: 'Pristine island paradise with crystal clear waters',
       category: 'Beach',
-      rating: 4.9,
       transitInfo: 'Route 16 to Smiling Cove Marina',
       image: '🏝️',
       tips: 'Take ferry from Smiling Cove. Bring snorkel gear.'
@@ -44,7 +42,6 @@ export default function GuideScreen() {
       name: 'Last Command Post',
       description: 'Historic WWII site with panoramic island views',
       category: 'Historical',
-      rating: 4.6,
       transitInfo: 'Route 4 to Capitol Hill, then taxi',
       image: '🏛️',
       tips: 'Wear comfortable shoes. Great for sunset views.'
@@ -54,10 +51,81 @@ export default function GuideScreen() {
       name: 'Grotto',
       description: 'World-famous diving and snorkeling spot',
       category: 'Diving',
-      rating: 4.7,
       transitInfo: 'Route 12 Express to Grotto Road',
       image: '🤿',
       tips: 'Best for experienced swimmers. Bring underwater camera.'
+    }
+  ];
+
+  const dining = [
+    {
+      id: 'd1',
+      name: 'Himawari Restaurant',
+      description: 'Popular Japanese and local fusion spot',
+      category: 'Restaurant',
+      transitInfo: 'Route 12 - Garapan Center',
+      image: '🍣',
+      tips: 'Try the bento and fresh sashimi.'
+    },
+    {
+      id: 'd2',
+      name: 'J’s Restaurant',
+      description: 'Local comfort food and BBQ',
+      category: 'Local',
+      transitInfo: 'Route 8 - Middle Road',
+      image: '🍗',
+      tips: 'Lunchtime gets busy; arrive early.'
+    },
+    {
+      id: 'd3',
+      name: 'Shirley’s Coffee Shop',
+      description: 'All-day breakfast and island classics',
+      category: 'Cafe',
+      transitInfo: 'Route 16 - Beach Road',
+      image: '☕',
+      tips: 'Great pancakes; portions are generous.'
+    }
+  ];
+
+  const shopping = [
+    {
+      id: 's1',
+      name: 'T Galleria by DFS',
+      description: 'Duty-free shopping for luxury brands',
+      category: 'Mall',
+      transitInfo: 'Route 12 - Garapan',
+      image: '🛍️',
+      tips: 'Bring ID for duty-free purchases.'
+    },
+    {
+      id: 's2',
+      name: 'Joeten Shopping Center',
+      description: 'Groceries and essentials in one place',
+      category: 'Center',
+      transitInfo: 'Route 8 - Susupe',
+      image: '🛒',
+      tips: 'Best spot to stock up on snacks and water.'
+    }
+  ];
+
+  const culture = [
+    {
+      id: 'c1',
+      name: 'Saipan Katori Shrine',
+      description: 'Historic Shinto shrine with tranquil grounds',
+      category: 'Heritage',
+      transitInfo: 'Route 4 - Capitol Hill',
+      image: '⛩️',
+      tips: 'Be respectful; photography may be restricted in some areas.'
+    },
+    {
+      id: 'c2',
+      name: 'CNMI Museum of History & Culture',
+      description: 'Exhibits on Chamorro and Carolinian heritage',
+      category: 'Museum',
+      transitInfo: 'Route 12 - Capitol Hill',
+      image: '🏺',
+      tips: 'Check hours; some galleries rotate.'
     }
   ];
 
@@ -160,46 +228,48 @@ export default function GuideScreen() {
             ))}
           </ScrollView>
 
-          {/* Attractions */}
+          {/* Category Items */}
           <View className="px-4 mb-6">
-            <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-3">Must-Visit Attractions</Text>
-            {attractions.map((attraction) => (
-              <CNMICard key={attraction.id} variant="elevated" className="mb-4">
+            <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-3">
+              {selectedCategory === 'attractions' && 'Must-Visit Attractions'}
+              {selectedCategory === 'dining' && 'Great Places to Eat'}
+              {selectedCategory === 'shopping' && 'Where to Shop'}
+              {selectedCategory === 'culture' && 'Culture & Heritage'}
+            </Text>
+            {(selectedCategory === 'attractions' ? attractions
+              : selectedCategory === 'dining' ? dining
+              : selectedCategory === 'shopping' ? shopping
+              : culture).map((item) => (
+              <CNMICard key={item.id} variant="elevated" className="mb-4">
                 <View className="flex-row">
                   {/* Image Placeholder */}
                   <View className="w-16 h-16 bg-cnmi-light rounded-lg items-center justify-center mr-4">
-                    <Text className="text-2xl">{attraction.image}</Text>
+                    <Text className="text-2xl">{item.image}</Text>
                   </View>
 
                   {/* Content */}
                   <View className="flex-1">
-                    <View className="flex-row items-center justify-between mb-1">
+                    <View className="flex-row items-center mb-1">
                       <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
-                        {attraction.name}
+                        {item.name}
                       </Text>
-                      <View className="flex-row items-center">
-                        <Ionicons name="star" size={14} color="#EAB308" />
-                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
-                          {attraction.rating}
-                        </Text>
-                      </View>
                     </View>
 
                     <Text className="text-sm text-typography-600 dark:text-typography-400 mb-2">
-                      {attraction.description}
+                      {item.description}
                     </Text>
 
                     <View className="bg-cnmi-light rounded-lg p-2 mb-2">
                       <View className="flex-row items-center">
                         <Ionicons name="bus" size={14} color="#6B46C1" />
                         <Text className="text-xs text-cnmi-primary ml-1 font-medium">
-                          {attraction.transitInfo}
+                          {item.transitInfo}
                         </Text>
                       </View>
                     </View>
 
                     <Text className="text-xs text-typography-500 dark:text-typography-400 italic">
-                      💡 {attraction.tips}
+                      💡 {item.tips}
                     </Text>
                   </View>
                 </View>
