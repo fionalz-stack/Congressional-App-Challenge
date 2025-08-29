@@ -25,7 +25,10 @@ export default function RoutesScreen() {
       color: '#6B46C1',
       nextArrival: '2 min',
       frequency: 'Every 15 min',
-      status: 'On Time'
+      status: 'On Time',
+      express: false,
+      local: false,
+      airport: true
     },
     {
       id: '8',
@@ -34,7 +37,10 @@ export default function RoutesScreen() {
       color: '#3B82F6',
       nextArrival: '5 min',
       frequency: 'Every 20 min',
-      status: 'Delayed'
+      status: 'Delayed',
+      express: false,
+      local: false,
+      airport: false
     },
     {
       id: '12',
@@ -43,7 +49,10 @@ export default function RoutesScreen() {
       color: '#10B981',
       nextArrival: '8 min',
       frequency: 'Every 30 min',
-      status: 'On Time'
+      status: 'On Time',
+      express: true,
+      local: false,
+      airport: true
     },
     {
       id: '4',
@@ -52,7 +61,10 @@ export default function RoutesScreen() {
       color: '#F59E0B',
       nextArrival: '12 min',
       frequency: 'Every 25 min',
-      status: 'On Time'
+      status: 'On Time',
+      express: false,
+      local: true,
+      airport: false
     }
   ];
 
@@ -138,7 +150,30 @@ export default function RoutesScreen() {
         {/* Routes List */}
         <View className="flex-1">
           <ScrollView className="px-4 py-4 bg-background-50 dark:bg-background-0">
-            {routes.map((route) => (
+            {(() => {
+              const query = searchQuery.trim().toLowerCase();
+              const matchesQuery = (r: typeof routes[number]) =>
+                !query || r.name.toLowerCase().includes(query) || r.description.toLowerCase().includes(query);
+
+              const matchesCategory = (r: typeof routes[number]) => {
+                if (selectedCategory === 'all') return true;
+                if (selectedCategory === 'express') return r.express || r.name.toLowerCase().includes('express');
+                if (selectedCategory === 'local') return r.local || r.name.toLowerCase().includes('local');
+                if (selectedCategory === 'airport') return r.airport || r.description.toLowerCase().includes('airport');
+                return true;
+              };
+
+              const filteredRoutes = routes.filter((r) => matchesQuery(r) && matchesCategory(r));
+
+              if (filteredRoutes.length === 0) {
+                return (
+                  <CNMICard variant="default" className="mb-4">
+                    <Text className="text-typography-700 dark:text-typography-300">No routes found.</Text>
+                  </CNMICard>
+                );
+              }
+
+              return filteredRoutes.map((route) => (
               <CNMICard key={route.id} variant="elevated" className="mb-4">
                 <View className="flex-row items-start">
                   {/* Route Number */}
@@ -201,7 +236,8 @@ export default function RoutesScreen() {
                   </TouchableOpacity>
                 </View>
               </CNMICard>
-            ))}
+              ));
+            })()}
           </ScrollView>
         </View>
 
