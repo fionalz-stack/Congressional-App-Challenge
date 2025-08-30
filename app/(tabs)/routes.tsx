@@ -12,23 +12,10 @@ export default function RoutesScreen() {
   const router = useRouter();
   const { theme } = useTheme();
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('fares');
+  const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
-<<<<<<< Updated upstream
-  const [checkedInRoute, setCheckedInRoute] = useState<any>(null);
-=======
-  const [expandedFares, setExpandedFares] = useState<string[]>([]);
->>>>>>> Stashed changes
   
-  const iconColor = theme === 'dark' ? '#9CA3AF' : '#6B7280';
-
-  const toggleFareSection = (fareType: string) => {
-    setExpandedFares(prev => 
-      prev.includes(fareType) 
-        ? prev.filter(type => type !== fareType)
-        : [...prev, fareType]
-    );
-  };
+  const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
 
 
   const routes = [
@@ -83,56 +70,10 @@ export default function RoutesScreen() {
   ];
 
   const categories = [
-    { id: 'fares', name: 'Fares', icon: 'card' },
     { id: 'all', name: 'All Routes', icon: 'bus' },
     { id: 'express', name: 'Express', icon: 'flash' },
     { id: 'local', name: 'Local', icon: 'location' },
     { id: 'airport', name: 'Airport', icon: 'airplane' },
-  ];
-
-  const fareCategories = [
-    {
-      id: 'general',
-      title: 'General Public',
-      oneWay: '$2.00',
-      dayPass: '$10.00',
-      icon: 'people'
-    },
-    {
-      id: 'elderly',
-      title: 'Elderly 55 Years & Over',
-      oneWay: '$1.00',
-      dayPass: '$5.00',
-      icon: 'person'
-    },
-    {
-      id: 'disabled',
-      title: 'Medically Approved Disabilities',
-      oneWay: '$1.00',
-      dayPass: '$5.00',
-      icon: 'accessibility'
-    },
-    {
-      id: 'military',
-      title: 'Active Military',
-      oneWay: '$1.00',
-      dayPass: '$5.00',
-      icon: 'shield'
-    },
-    {
-      id: 'veterans',
-      title: 'Veterans & Their Families',
-      oneWay: '$1.00',
-      dayPass: '$5.00',
-      icon: 'star'
-    },
-    {
-      id: 'students',
-      title: 'Students with Valid I.D.',
-      oneWay: '$1.00',
-      dayPass: '$5.00',
-      icon: 'school'
-    }
   ];
 
   const handleViewRoute = (route: any) => {
@@ -169,10 +110,10 @@ export default function RoutesScreen() {
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search routes or destinations..."
-              placeholderTextColor={theme === 'dark' ? '#9CA3AF' : '#9CA3AF'}
+              placeholderTextColor="#9CA3AF"
               className="flex-1 ml-2"
               style={{ 
-                color: theme === 'dark' ? '#9CA3AF' : '#6B7280',
+                color: theme === 'dark' ? '#F9FAFB' : '#111827',
                 textAlignVertical: 'center',
                 paddingVertical: 0,
                 margin: 0,
@@ -201,7 +142,7 @@ export default function RoutesScreen() {
               >
                 <Ionicons
                   name={category.icon as any}
-                  size={16 as number}
+                  size={16}
                   color={selectedCategory === category.id ? 'white' : iconColor}
                 />
                 <Text className={`ml-2 font-medium ${selectedCategory === category.id
@@ -218,192 +159,87 @@ export default function RoutesScreen() {
         {/* Routes List */}
         <View className="flex-1">
           <ScrollView className="px-4 py-4 bg-background-50 dark:bg-background-0">
-            {selectedCategory === 'fares' ? (
-              // Fares Display
-              <View>
-                <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-4">Fixed Route Pricing</Text>
-                
-                {/* Pricing Header */}
-                <CNMICard variant="default" className="mb-4">
-                  <View className="flex-row items-center justify-center mb-4">
-                    <View className="w-12 h-12 bg-cnmi-primary rounded-full items-center justify-center mr-3">
-                      <Text className="text-white text-xl font-bold">$</Text>
-                    </View>
-                    <Text className="text-lg font-bold text-typography-900 dark:text-typography-900">Fixed Route Pricing</Text>
+            {(() => {
+              const query = searchQuery.trim().toLowerCase();
+              const matchesQuery = (r: typeof routes[number]) =>
+                !query || r.name.toLowerCase().includes(query) || r.description.toLowerCase().includes(query);
+
+              const matchesCategory = (r: typeof routes[number]) => {
+                if (selectedCategory === 'all') return true;
+                if (selectedCategory === 'express') return r.express || r.name.toLowerCase().includes('express');
+                if (selectedCategory === 'local') return r.local || r.name.toLowerCase().includes('local');
+                if (selectedCategory === 'airport') return r.airport || r.description.toLowerCase().includes('airport');
+                return true;
+              };
+
+              const filteredRoutes = routes.filter((r) => matchesQuery(r) && matchesCategory(r));
+
+              if (filteredRoutes.length === 0) {
+                return (
+                  <CNMICard variant="default" className="mb-4">
+                    <Text className="text-typography-700 dark:text-typography-300">No routes found.</Text>
+                  </CNMICard>
+                );
+              }
+
+              return filteredRoutes.map((route) => (
+              <CNMICard key={route.id} variant="elevated" className="mb-4">
+                <View className="flex-row items-start">
+                  {/* Route Number */}
+                  <View
+                    className="w-12 h-12 rounded-lg items-center justify-center mr-4"
+                    style={{ backgroundColor: route.color }}
+                  >
+                    <Text className="text-white font-bold text-lg">{route.id}</Text>
                   </View>
-                  
-                  {/* Table Headers */}
-                  <View className="flex-row bg-cnmi-primary rounded-lg p-3 mb-3">
-                    <View className="flex-1">
-                      <Text className="text-white font-bold text-center">FARES</Text>
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-white font-bold text-center">ONE WAY</Text>
-                    </View>
-                    <View className="flex-1">
-                      <Text className="text-white font-bold text-center">DAY PASS</Text>
-                    </View>
-                  </View>
 
-                  {/* Fare Categories */}
-                  {fareCategories.map((category) => (
-                    <View key={category.id} className="mb-2">
-                      <TouchableOpacity
-                        onPress={() => toggleFareSection(category.id)}
-                        className="flex-row items-center justify-between p-3 bg-background-50 dark:bg-background-100 rounded-lg"
-                      >
-                        <View className="flex-row items-center flex-1">
-                          <Ionicons 
-                            name={category.icon as any} 
-                            size={20} 
-                            color={theme === 'dark' ? '#6B7280' : '#374151'} 
-                          />
-                          <Text className="ml-3 font-semibold text-typography-900 dark:text-typography-900 flex-1">
-                            {category.title}
-                          </Text>
-                        </View>
-                        <View className="flex-row items-center">
-                          <View className="bg-cnmi-primary px-3 py-1 rounded-lg mr-2">
-                            <Text className="text-white font-bold text-sm">{category.oneWay}</Text>
-                          </View>
-                          <View className="bg-cnmi-secondary px-3 py-1 rounded-lg mr-2">
-                            <Text className="text-white font-bold text-sm">{category.dayPass}</Text>
-                          </View>
-                          <Ionicons 
-                            name={expandedFares.includes(category.id) ? 'chevron-up' : 'chevron-down'} 
-                            size={20} 
-                            color={theme === 'dark' ? '#6B7280' : '#374151'} 
-                          />
-                        </View>
-                      </TouchableOpacity>
-                      
-                      {/* Expanded Details */}
-                      {expandedFares.includes(category.id) && (
-                        <View className="mt-2 ml-6 p-3 bg-background-0 dark:bg-background-50 rounded-lg border border-outline-200 dark:border-outline-700">
-                          <Text className="text-sm text-typography-600 dark:text-typography-400 mb-2">
-                            {category.id === 'general' && 'Standard fare for all adult passengers'}
-                            {category.id === 'elderly' && 'Valid ID required. Available for passengers 55 years and older'}
-                            {category.id === 'disabled' && 'Medical documentation required. Accessible seating available'}
-                            {category.id === 'military' && 'Active duty military ID required. Thank you for your service'}
-                            {category.id === 'veterans' && 'Veteran ID or DD-214 required. Family members must be accompanied'}
-                            {category.id === 'students' && 'Valid student ID from accredited institutions required'}
-                          </Text>
-                          <View className="flex-row items-center">
-                            <Ionicons name="information-circle" size={16} color="#6B46C1" />
-                            <Text className="text-xs text-cnmi-primary ml-1">
-                              {category.id === 'general' && 'Most common fare type'}
-                              {category.id === 'elderly' && 'Senior discount available'}
-                              {category.id === 'disabled' && 'Wheelchair accessible vehicles'}
-                              {category.id === 'military' && 'Active duty verification needed'}
-                              {category.id === 'veterans' && 'Veteran status verification needed'}
-                              {category.id === 'students' && 'Student verification needed'}
-                            </Text>
-                          </View>
-                        </View>
-                      )}
-                    </View>
-                  ))}
-                </CNMICard>
-                
-                <CNMICard variant="outlined" className="mb-4">
-                  <View className="flex-row items-start">
-                    <View className="w-10 h-10 bg-green-100 dark:bg-green-900 rounded-full items-center justify-center mr-3">
-                      <Ionicons name="card" size={20} color="#16A34A" />
-                    </View>
-                    <View className="flex-1">
-                      <Text className="font-semibold text-typography-900 dark:text-typography-900 mb-1">Payment Methods</Text>
-                      <Text className="text-sm text-typography-600 dark:text-typography-400">Exact change required. Cash only. Day passes provide unlimited rides for 24 hours from first use.</Text>
-                    </View>
-                  </View>
-                </CNMICard>
-              </View>
-            ) : (
-              // Routes Display
-              (() => {
-                const query = searchQuery.trim().toLowerCase();
-                const matchesQuery = (r: typeof routes[number]) =>
-                  !query || r.name.toLowerCase().includes(query) || r.description.toLowerCase().includes(query);
-
-                const matchesCategory = (r: typeof routes[number]) => {
-                  if (selectedCategory === 'all') return true;
-                  if (selectedCategory === 'express') return r.express || r.name.toLowerCase().includes('express');
-                  if (selectedCategory === 'local') return r.local || r.name.toLowerCase().includes('local');
-                  if (selectedCategory === 'airport') return r.airport || r.description.toLowerCase().includes('airport');
-                  return true;
-                };
-
-                const filteredRoutes = routes.filter((r) => matchesQuery(r) && matchesCategory(r));
-
-                if (filteredRoutes.length === 0) {
-                  return (
-                    <CNMICard variant="default" className="mb-4">
-                      <Text className="text-typography-700 dark:text-typography-300">No routes found.</Text>
-                    </CNMICard>
-                  );
-                }
-
-                return filteredRoutes.map((route) => (
-                <CNMICard key={route.id} variant="elevated" className="mb-4">
-                  <View className="flex-row items-start">
-                    {/* Route Number */}
-                    <View
-                      className="w-12 h-12 rounded-lg items-center justify-center mr-4"
-                      style={{ backgroundColor: route.color }}
-                    >
-                      <Text className="text-white font-bold text-lg">{route.id}</Text>
-                    </View>
-
-                    {/* Route Info */}
-                    <View className="flex-1">
-                      <View className="flex-row items-center justify-between mb-1">
-                        <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
-                          {route.name}
-                        </Text>
-                        <View className={`px-2 py-1 rounded-full ${route.status === 'On Time' ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900'
+                  {/* Route Info */}
+                  <View className="flex-1">
+                    <View className="flex-row items-center justify-between mb-1">
+                      <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
+                        {route.name}
+                      </Text>
+                      <View className={`px-2 py-1 rounded-full ${route.status === 'On Time' ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900'
+                        }`}>
+                        <Text className={`text-xs font-medium ${route.status === 'On Time' ? 'text-green-800 dark:text-green-200' : 'text-yellow-800 dark:text-yellow-200'
                           }`}>
-                          <Text className={`text-xs font-medium ${route.status === 'On Time' ? 'text-green-800 dark:text-green-200' : 'text-yellow-800 dark:text-yellow-200'
-                            }`}>
-                            {route.status}
-                          </Text>
-                        </View>
+                          {route.status}
+                        </Text>
                       </View>
+                    </View>
 
-                      <Text className="text-typography-600 dark:text-typography-400 mb-3">{route.description}</Text>
+                    <Text className="text-typography-600 dark:text-typography-400 mb-3">{route.description}</Text>
 
-                      <View className="flex-row items-center justify-between">
-                        <View className="flex-row items-center">
-                          <Ionicons name="time" size={16} color={iconColor} />
-                          <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
-                            Next: {route.nextArrival}
-                          </Text>
-                        </View>
-                        <View className="flex-row items-center">
-                          <Ionicons name="refresh" size={16} color={iconColor} />
-                          <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
-                            {route.frequency}
-                          </Text>
-                        </View>
+                    <View className="flex-row items-center justify-between">
+                      <View className="flex-row items-center">
+                        <Ionicons name="time" size={16} color={iconColor} />
+                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
+                          Next: {route.nextArrival}
+                        </Text>
+                      </View>
+                      <View className="flex-row items-center">
+                        <Ionicons name="refresh" size={16} color={iconColor} />
+                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
+                          {route.frequency}
+                        </Text>
                       </View>
                     </View>
                   </View>
+                </View>
 
-<<<<<<< Updated upstream
                 {/* Action Buttons */}
                 <View className="flex-row mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
                   <TouchableOpacity
                     className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
                     onPress={() => handleViewRoute(route)}
                   >
-                    <Ionicons name="map" size={16} color={iconColor} />
+                    <Ionicons name="map" size="16" color="#6B46C1" />
                     <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
                   </TouchableOpacity>
-                                     <TouchableOpacity
-                     className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg"
-                     onPress={() => {
-                       setCheckedInRoute(route);
-                       setShowCheckInModal(true);
-                     }}
-                   >
+                  <TouchableOpacity
+                    className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg"
+                    onPress={() => setShowCheckInModal(true)}
+                  >
                     <Ionicons name="checkmark-circle" size={16} color="white" />
                     <Text className="text-white font-medium ml-2">Check In</Text>
                   </TouchableOpacity>
@@ -411,53 +247,24 @@ export default function RoutesScreen() {
               </CNMICard>
               ));
             })()}
-=======
-                  {/* Action Buttons */}
-                  <View className="flex-row mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
-                    <TouchableOpacity
-                      className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
-                      onPress={() => handleViewRoute(route)}
-                    >
-                      <Ionicons name="map" size={16} color="#6B46C1" />
-                      <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg"
-                      onPress={() => setShowCheckInModal(true)}
-                    >
-                      <Ionicons name="checkmark-circle" size={16} color="white" />
-                      <Text className="text-white font-medium ml-2">Check In</Text>
-                    </TouchableOpacity>
-                  </View>
-                </CNMICard>
-                ));
-              })()
-            )}
->>>>>>> Stashed changes
           </ScrollView>
         </View>
 
         {/* Floating Action Button */}
-                 <TouchableOpacity
-           className="absolute bottom-6 right-6 w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
-           onPress={() => {
-             setCheckedInRoute(routes[0]); // Default to first route for FAB
-             setShowCheckInModal(true);
-           }}
-         >
+        <TouchableOpacity
+          className="absolute bottom-6 right-6 w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
+          onPress={() => setShowCheckInModal(true)}
+        >
           <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
 
         {/* Check-in Confirmation Modal */}
-                 <Modal
-           visible={showCheckInModal}
-           transparent={true}
-           animationType="slide"
-           onRequestClose={() => {
-             setShowCheckInModal(false);
-             setCheckedInRoute(null);
-           }}
-         >
+        <Modal
+          visible={showCheckInModal}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowCheckInModal(false)}
+        >
           <BlurView 
             intensity={80} 
             tint={theme === 'dark' ? 'dark' : 'light'} 
@@ -480,77 +287,56 @@ export default function RoutesScreen() {
                 </Text>
               </View>
 
-                             {/* Route Info Card */}
-               {checkedInRoute && (
-                 <View className="bg-background-50 dark:bg-background-100 rounded-2xl p-4 mb-6 border border-outline-200 dark:border-outline-700">
-                   <View className="flex-row items-center">
-                     <View 
-                       className="w-14 h-14 rounded-lg items-center justify-center mr-4"
-                       style={{ backgroundColor: checkedInRoute.color }}
-                     >
-                       <Text className="text-white font-bold text-lg">{checkedInRoute.id}</Text>
-                     </View>
-                     
-                     <View className="flex-1">
-                       <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-1">
-                         {checkedInRoute.name}
-                       </Text>
-                       <Text className="text-sm text-typography-600 dark:text-typography-400 mb-1">
-                         {checkedInRoute.description}
-                       </Text>
-                       <View className="flex-row items-center">
-                         <Ionicons name="time" size={14} color={iconColor} />
-                         <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
-                           Next arrival: {checkedInRoute.nextArrival}
-                         </Text>
-                       </View>
-                     </View>
-                     
-                     <View className="items-end">
-                       <View className={`px-2 py-1 rounded-full ${checkedInRoute.status === 'On Time' ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900'}`}>
-                         <Text className={`text-xs font-medium ${checkedInRoute.status === 'On Time' ? 'text-green-800 dark:text-green-200' : 'text-yellow-800 dark:text-yellow-200'}`}>
-                           {checkedInRoute.status}
-                         </Text>
-                       </View>
-                     </View>
-                   </View>
-                 </View>
-               )}
+              {/* Route Info Card */}
+              <View className="bg-background-50 dark:bg-background-100 rounded-2xl p-4 mb-6 border border-outline-200 dark:border-outline-700">
+                <View className="flex-row items-center">
+                  <View className="w-14 h-14 rounded-lg items-center justify-center mr-4" style={{ backgroundColor: '#6B46C1' }}>
+                    <Text className="text-white font-bold text-lg">16</Text>
+                  </View>
+                  
+                  <View className="flex-1">
+                    <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-1">
+                      Route 16 Northbound
+                    </Text>
+                    <Text className="text-sm text-typography-600 dark:text-typography-400 mb-1">
+                      Garapan → Airport → Susupe
+                    </Text>
+                    <View className="flex-row items-center">
+                      <Ionicons name="time" size={14} color="#6B46C1" />
+                      <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
+                        Next arrival: 2 min
+                      </Text>
+                    </View>
+                  </View>
+                  
+                  <View className="items-end">
+                    <View className="px-2 py-1 rounded-full bg-green-100 dark:bg-green-900">
+                      <Text className="text-xs font-medium text-green-800 dark:text-green-200">
+                        On Time
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
 
               {/* Action Buttons */}
               <View>
-<<<<<<< Updated upstream
-                                 <TouchableOpacity 
-                   className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
-                   onPress={() => {
-                     setShowCheckInModal(false);
-                     if (checkedInRoute) {
-                       handleViewRoute(checkedInRoute);
-                     }
-                   }}
-                   style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
-                 >
-=======
-                                  <TouchableOpacity 
-                    className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
-                    onPress={() => {
-                      setShowCheckInModal(false);
-                      handleViewRoute(routes[0]);
-                    }}
-                    style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
-                  >
->>>>>>> Stashed changes
+                <TouchableOpacity 
+                  className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
+                  onPress={() => {
+                    setShowCheckInModal(false);
+                    handleViewRoute();
+                  }}
+                  style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
+                >
                   <Text className="text-white font-semibold text-lg mr-2">View on Map</Text>
                   <Ionicons name="arrow-forward" size={20} color="white" />
                 </TouchableOpacity>
                 
-                                 <TouchableOpacity 
-                   className="bg-background-100 dark:bg-background-200 rounded-2xl py-4 px-6 border border-outline-200 dark:border-outline-700"
-                   onPress={() => {
-                     setShowCheckInModal(false);
-                     setCheckedInRoute(null);
-                   }}
-                 >
+                <TouchableOpacity 
+                  className="bg-background-100 dark:bg-background-200 rounded-2xl py-4 px-6 border border-outline-200 dark:border-outline-700"
+                  onPress={() => setShowCheckInModal(false)}
+                >
                   <Text className="text-typography-700 dark:text-typography-300 font-medium text-center text-lg">
                     Stay Here
                   </Text>
@@ -558,14 +344,13 @@ export default function RoutesScreen() {
               </View>
 
               {/* Cancel Option */}
-                             <TouchableOpacity 
-                 className="mt-4 py-2"
-                 onPress={() => {
-                   setShowCheckInModal(false);
-                   setCheckedInRoute(null);
-                   // You can add cancel check-in logic here
-                 }}
-               >
+              <TouchableOpacity 
+                className="mt-4 py-2"
+                onPress={() => {
+                  setShowCheckInModal(false);
+                  // You can add cancel check-in logic here
+                }}
+              >
                 <Text className="text-center text-sm text-typography-500 dark:text-typography-400 underline">
                   Cancel check-in
                 </Text>
