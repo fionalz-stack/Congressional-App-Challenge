@@ -138,6 +138,8 @@ export default function GuideScreen() {
     }
   ];
 
+
+
   const transitTips = [
     {
       icon: 'time',
