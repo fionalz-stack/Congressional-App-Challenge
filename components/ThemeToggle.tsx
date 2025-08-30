@@ -10,7 +10,6 @@ export function ThemeToggle() {
   const { theme, preference, setThemePreference } = useTheme();
 
   const options = [
-    { value: 'system' as const, label: 'System' },
     { value: 'light' as const, label: 'Light' },
     { value: 'dark' as const, label: 'Dark' },
   ];
