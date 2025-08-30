@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { Platform, Text, TouchableOpacity, View } from 'react-native';
 import { useTheme } from '../contexts/ThemeContext';
 
 export function ThemeToggle() {
@@ -20,11 +20,15 @@ export function ThemeToggle() {
         <TouchableOpacity
           key={option.value}
           onPress={() => setThemePreference(option.value)}
-          className={`flex-1 py-2 px-3 rounded-md ${
+          className={`py-2 px-4 rounded-md ${
             preference === option.value
               ? 'bg-primary-500'
               : 'bg-transparent'
           }`}
+          style={{
+            minWidth: Platform.OS === 'android' ? 80 : undefined,
+            maxWidth: Platform.OS === 'android' ? 120 : undefined,
+          }}
         >
           <Text
             className={`text-center text-sm font-medium ${
@@ -48,6 +52,11 @@ export function SimpleThemeToggle() {
     <TouchableOpacity
       onPress={toggleTheme}
       className="bg-background-50 dark:bg-background-100 p-3 rounded-lg"
+      style={{
+        alignSelf: 'flex-start',
+        minWidth: Platform.OS === 'android' ? 120 : undefined,
+        maxWidth: Platform.OS === 'android' ? 200 : undefined,
+      }}
     >
       <Text className="text-typography-900 dark:text-typography-100 font-medium">
         {theme === 'light' ? '🌙 Dark Mode' : '☀️ Light Mode'}
