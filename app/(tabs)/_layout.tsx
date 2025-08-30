@@ -74,7 +74,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="taxi"
         options={{
-          title: 'Taxi',
+          title: 'CARS/Paratransit',
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="car" size={size} color={color} />
           ),

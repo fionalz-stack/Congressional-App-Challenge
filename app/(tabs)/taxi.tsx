@@ -54,7 +54,7 @@ export default function TaxiScreen() {
     { name: 'Saipan International Airport', icon: 'airplane' },
     { name: 'Garapan Tourist District', icon: 'storefront' },
     { name: 'American Memorial Park', icon: 'leaf' },
-    { name: 'DFS Galleria', icon: 'bag' },
+    { name: 'I Love Saipan', icon: 'bag' },
   ];
 
   const handleTaxiRequest = () => {
@@ -95,10 +95,10 @@ export default function TaxiScreen() {
         {/* Header */}
         <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
           <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
-            Call a Taxi
+            Call-A-Ride Saipan/Paratransit
           </Text>
           <Text className="text-sm text-typography-600 dark:text-typography-400">
-            Quick and reliable rides across CNMI
+            Accessible transportation services across CNMI
           </Text>
         </View>
 
@@ -187,10 +187,10 @@ export default function TaxiScreen() {
             </View>
           </View>
 
-          {/* Available Taxis */}
+          {/* Available Vehicles */}
           <View className="px-4">
             <Text className="text-lg font-semibold mb-3 text-typography-900 dark:text-typography-900">
-              Available Taxis
+              Available Vehicles
             </Text>
             {availableTaxis.map((taxi) => (
               <CNMICard 
@@ -243,7 +243,7 @@ export default function TaxiScreen() {
                   {selectedTaxi === taxi.id && (
                     <View className="mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
                       <CNMIButton
-                        title="Request This Taxi"
+                        title="Request This Vehicle"
                         onPress={handleTaxiRequest}
                         icon={<Ionicons name="call" size={20} color="white" />}
                       />
