@@ -1,6 +1,7 @@
 import { CNMICard } from '@/components/ui/CNMICard';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
+import { BlurView } from 'expo-blur';
 
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
@@ -245,30 +246,101 @@ export default function RoutesScreen() {
         <Modal
           visible={showCheckInModal}
           transparent={true}
-          animationType="fade"
+          animationType="slide"
           onRequestClose={() => setShowCheckInModal(false)}
         >
-          <View 
-            className="flex-1 justify-center items-center px-4"
-            style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          <BlurView 
+            intensity={80} 
+            tint={theme === 'dark' ? 'dark' : 'light'} 
+            className="flex-1 justify-end"
           >
-            <View className="bg-background-0 dark:bg-background-50 rounded-3xl p-6 w-full max-w-sm items-center">
-              <View className="w-20 h-20 rounded-full bg-cnmi-light items-center justify-center mb-4">
-                <Text className="text-4xl">😊</Text>
+            <View className="bg-background-0 dark:bg-background-50 rounded-t-3xl px-6 pt-8 pb-10 mx-0 shadow-2xl border-t border-outline-200 dark:border-outline-700">
+              {/* Success Indicator */}
+              <View className="items-center mb-6">
+                <View className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full items-center justify-center mb-4 shadow-lg">
+                  <View className="w-16 h-16 bg-green-500 rounded-full items-center justify-center">
+                    <Ionicons name="checkmark" size={32} color="white" />
+                  </View>
+                </View>
+                
+                <Text className="text-2xl font-bold text-center mb-2 text-typography-900 dark:text-typography-900">
+                  Check-in confirmed!
+                </Text>
+                <Text className="text-base text-center text-typography-600 dark:text-typography-400 leading-5">
+                  Your bus driver is on the way
+                </Text>
               </View>
 
-              <Text className="text-xl font-bold text-typography-900 dark:text-typography-900 mb-2 text-center">Check-in confirmed!</Text>
-              <Text className="text-base text-typography-700 dark:text-typography-300 text-center">Your bus driver is on</Text>
-              <Text className="text-base text-typography-700 dark:text-typography-300 mb-6 text-center">the way.</Text>
+              {/* Route Info Card */}
+              <View className="bg-background-50 dark:bg-background-100 rounded-2xl p-4 mb-6 border border-outline-200 dark:border-outline-700">
+                <View className="flex-row items-center">
+                  <View className="w-14 h-14 rounded-lg items-center justify-center mr-4" style={{ backgroundColor: '#6B46C1' }}>
+                    <Text className="text-white font-bold text-lg">16</Text>
+                  </View>
+                  
+                  <View className="flex-1">
+                    <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-1">
+                      Route 16 Northbound
+                    </Text>
+                    <Text className="text-sm text-typography-600 dark:text-typography-400 mb-1">
+                      Garapan → Airport → Susupe
+                    </Text>
+                    <View className="flex-row items-center">
+                      <Ionicons name="time" size={14} color="#6B46C1" />
+                      <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
+                        Next arrival: 2 min
+                      </Text>
+                    </View>
+                  </View>
+                  
+                  <View className="items-end">
+                    <View className="px-2 py-1 rounded-full bg-green-100 dark:bg-green-900">
+                      <Text className="text-xs font-medium text-green-800 dark:text-green-200">
+                        On Time
+                      </Text>
+                    </View>
+                  </View>
+                </View>
+              </View>
 
-              <TouchableOpacity
-                className="bg-cnmi-primary rounded-full py-3 px-8 w-full"
-                onPress={() => setShowCheckInModal(false)}
+              {/* Action Buttons */}
+              <View>
+                <TouchableOpacity 
+                  className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
+                  onPress={() => {
+                    setShowCheckInModal(false);
+                    handleViewRoute();
+                  }}
+                  style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
+                >
+                  <Text className="text-white font-semibold text-lg mr-2">View on Map</Text>
+                  <Ionicons name="arrow-forward" size={20} color="white" />
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  className="bg-background-100 dark:bg-background-200 rounded-2xl py-4 px-6 border border-outline-200 dark:border-outline-700"
+                  onPress={() => setShowCheckInModal(false)}
+                >
+                  <Text className="text-typography-700 dark:text-typography-300 font-medium text-center text-lg">
+                    Stay Here
+                  </Text>
+                </TouchableOpacity>
+              </View>
+
+              {/* Cancel Option */}
+              <TouchableOpacity 
+                className="mt-4 py-2"
+                onPress={() => {
+                  setShowCheckInModal(false);
+                  // You can add cancel check-in logic here
+                }}
               >
-                <Text className="text-white font-semibold text-center">Got It!</Text>
+                <Text className="text-center text-sm text-typography-500 dark:text-typography-400 underline">
+                  Cancel check-in
+                </Text>
               </TouchableOpacity>
             </View>
-          </View>
+          </BlurView>
         </Modal>
       </View>
     </SafeAreaView>
