@@ -1,6 +1,5 @@
 import { CNMIButton } from "@/components/ui/CNMIButton";
 import { router } from "expo-router";
-import { useState } from "react";
 import {
   Image,
   KeyboardAvoidingView,
@@ -10,14 +9,9 @@ import {
 } from "react-native";
 
 export default function LoginScreen() {
-  const [loading, setLoading] = useState(false);
 
   const handleDriverLogin = () => {
-    router.push({ pathname: "/(auth)/signup", params: { role: "driver" } as any });
-  };
-
-  const handleTaxiLogin = () => {
-    router.push({ pathname: "/(auth)/signup", params: { role: "taxi" } as any });
+    router.replace("/(tabs)/map?role=driver");
   };
 
   const handleContinueAsUser = () => {
@@ -49,13 +43,8 @@ export default function LoginScreen() {
             <View style={{ width: 320 }}>
               <View className="flex flex-col gap-6">
                 <CNMIButton
-                  title="Driver Login"
+                  title="Login as Driver"
                   onPress={handleDriverLogin}
-                  variant="outline"
-                />
-                <CNMIButton
-                  title="Taxi Login"
-                  onPress={handleTaxiLogin}
                   variant="outline"
                 />
                 <CNMIButton

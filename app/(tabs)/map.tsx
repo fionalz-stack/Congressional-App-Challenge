@@ -3,23 +3,24 @@ import { useTheme } from "@/contexts/ThemeContext";
 import { Ionicons } from "@expo/vector-icons";
 import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { LinearGradient } from "expo-linear-gradient";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React, { useCallback, useMemo, useRef, useState } from "react";
 import {
-  Dimensions,
-  Keyboard,
-  Platform,
-  ScrollView,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  TouchableWithoutFeedback,
-  View,
+    Dimensions,
+    Keyboard,
+    Platform,
+    ScrollView,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    TouchableWithoutFeedback,
+    View,
 } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import MapView, {
-  Marker,
-  PROVIDER_DEFAULT,
-  PROVIDER_GOOGLE,
+    Marker,
+    PROVIDER_DEFAULT,
+    PROVIDER_GOOGLE,
 } from "react-native-maps";
 
 // Constants
@@ -78,9 +79,17 @@ interface Taxi {
 export default function MapScreen() {
   // Theme
   const { theme } = useTheme();
+  const router = useRouter();
+  
+  // Get route parameters if navigating from stops screen
+  const params = useLocalSearchParams();
+  const routeId = params.routeId as string;
+  const routeName = params.routeName as string;
+  const routeDescription = params.routeDescription as string;
+  const isDriverMode = params.mode === 'driver';
 
   // State
-  const [selectedRoute, setSelectedRoute] = useState<string | null>(null);
+  const [selectedRoute, setSelectedRoute] = useState<string | null>(routeId || null);
   const [searchQuery, setSearchQuery] = useState("");
   const [showSearchResults, setShowSearchResults] = useState(false);
   const [selectedDestination, setSelectedDestination] = useState<string | null>(
@@ -281,6 +290,37 @@ export default function MapScreen() {
               </MapView>
             </View>
           </TouchableWithoutFeedback>
+
+          {/* Driver Mode Header */}
+          {isDriverMode && (
+            <View
+              className="absolute z-30 top-4 left-4 right-4"
+            >
+              <CNMICard variant="elevated" className="bg-cnmi-primary">
+                <View className="flex-row items-center justify-between">
+                  <TouchableOpacity 
+                    onPress={() => router.back()}
+                    className="mr-3 p-1"
+                  >
+                    <Ionicons name="arrow-back" size={20} color="white" />
+                  </TouchableOpacity>
+                  <View className="flex-1">
+                    <Text className="text-white font-bold text-lg">
+                      {routeName}
+                    </Text>
+                    <Text className="text-white text-sm opacity-90">
+                      {routeDescription}
+                    </Text>
+                  </View>
+                  <View className="bg-white bg-opacity-20 rounded-full px-3 py-1">
+                    <Text className="text-white text-xs font-medium">
+                      DRIVER MODE
+                    </Text>
+                  </View>
+                </View>
+              </CNMICard>
+            </View>
+          )}
 
           {/* Top Fade Overlay */}
           <LinearGradient

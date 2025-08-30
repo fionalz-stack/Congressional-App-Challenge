@@ -1,6 +1,7 @@
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Ionicons } from '@expo/vector-icons';
+import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -11,6 +12,11 @@ export default function SettingsScreen() {
   const [locationEnabled, setLocationEnabled] = React.useState(true);
 
   const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
+
+  const handleLogout = () => {
+    // Navigate back to main page which will redirect to login
+    router.replace('/');
+  };
 
   const SettingItem = ({
     icon,
@@ -154,6 +160,22 @@ export default function SettingsScreen() {
             icon="shield-checkmark"
             title="Privacy Policy"
           />
+        </View>
+
+        {/* Logout Section */}
+        <View className="mx-5 mb-8">
+          <TouchableOpacity
+            onPress={handleLogout}
+            activeOpacity={0.7}
+            className="bg-red-500 dark:bg-red-600 rounded-xl py-4 px-5 items-center"
+          >
+            <View className="flex-row items-center">
+              <Ionicons name="log-out-outline" size={20} color="#FFFFFF" />
+              <Text className="text-white font-semibold text-base ml-2">
+                Log Out
+              </Text>
+            </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
     </SafeAreaView>

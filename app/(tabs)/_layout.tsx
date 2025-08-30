@@ -1,10 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import { Tabs } from 'expo-router';
+import { Tabs, useLocalSearchParams } from 'expo-router';
 
 import { useTheme } from '@/contexts/ThemeContext';
 
 export default function TabLayout() {
   const { theme } = useTheme();
+  const params = useLocalSearchParams();
+  const isDriver = params.role === 'driver';
   
   return (
     <Tabs
@@ -35,6 +37,7 @@ export default function TabLayout() {
           ),
         }}
       />
+      
       <Tabs.Screen
         name="guide"
         options={{
@@ -42,8 +45,10 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="book" size={size} color={color} />
           ),
+          href: isDriver ? null : undefined, // Hide for drivers
         }}
       />
+      
       <Tabs.Screen
         name="routes"
         options={{
@@ -51,8 +56,21 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="navigate" size={size} color={color} />
           ),
+          href: isDriver ? null : undefined, // Hide for drivers
         }}
       />
+      
+      <Tabs.Screen
+        name="stops"
+        options={{
+          title: 'Stops',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="location" size={size} color={color} />
+          ),
+          href: isDriver ? null : undefined, // Hide for drivers
+        }}
+      />
+      
       <Tabs.Screen
         name="taxi"
         options={{
@@ -60,8 +78,21 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="car" size={size} color={color} />
           ),
+          href: isDriver ? null : undefined, // Hide for drivers
         }}
       />
+      
+      <Tabs.Screen
+        name="driverRoute"
+        options={{
+          title: 'Driver Route',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="bus" size={size} color={color} />
+          ),
+          href: isDriver ? undefined : null, // Hide for users
+        }}
+      />
+      
       <Tabs.Screen
         name="settings"
         options={{
@@ -71,7 +102,6 @@ export default function TabLayout() {
           ),
         }}
       />
-
     </Tabs>
   );
 }

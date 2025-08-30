@@ -75,8 +75,16 @@ export default function RoutesScreen() {
     { id: 'airport', name: 'Airport', icon: 'airplane' },
   ];
 
-  const handleViewRoute = () => {
-    router.push('/map');
+  const handleViewRoute = (route: any) => {
+    // Navigate to stops screen with route information
+    router.push({
+      pathname: '/stops',
+      params: { 
+        routeId: route.id,
+        routeName: route.name,
+        routeDescription: route.description
+      }
+    });
   };
 
   return (
@@ -222,9 +230,9 @@ export default function RoutesScreen() {
                 <View className="flex-row mt-4 pt-4 border-t border-outline-200 dark:border-outline-700">
                   <TouchableOpacity
                     className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
-                    onPress={handleViewRoute}
+                    onPress={() => handleViewRoute(route)}
                   >
-                    <Ionicons name="map" size={16} color="#6B46C1" />
+                    <Ionicons name="map" size="16" color="#6B46C1" />
                     <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -240,6 +248,14 @@ export default function RoutesScreen() {
             })()}
           </ScrollView>
         </View>
+
+        {/* Floating Action Button */}
+        <TouchableOpacity
+          className="absolute bottom-6 right-6 w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
+          onPress={() => setShowCheckInModal(true)}
+        >
+          <Ionicons name="add" size={28} color="white" />
+        </TouchableOpacity>
 
         {/* Check-in Confirmation Modal */}
         <Modal
