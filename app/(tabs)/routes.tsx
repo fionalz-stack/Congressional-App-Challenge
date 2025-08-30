@@ -14,8 +14,9 @@ export default function RoutesScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showCheckInModal, setShowCheckInModal] = useState(false);
+  const [checkedInRoute, setCheckedInRoute] = useState<any>(null);
   
-  const iconColor = theme === 'dark' ? '#FFFFFF' : '#6B7280';
+  const iconColor = theme === 'dark' ? '#9CA3AF' : '#6B7280';
 
 
   const routes = [
@@ -110,10 +111,10 @@ export default function RoutesScreen() {
               value={searchQuery}
               onChangeText={setSearchQuery}
               placeholder="Search routes or destinations..."
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={theme === 'dark' ? '#9CA3AF' : '#9CA3AF'}
               className="flex-1 ml-2"
               style={{ 
-                color: theme === 'dark' ? '#F9FAFB' : '#111827',
+                color: theme === 'dark' ? '#9CA3AF' : '#6B7280',
                 textAlignVertical: 'center',
                 paddingVertical: 0,
                 margin: 0,
@@ -233,13 +234,16 @@ export default function RoutesScreen() {
                     className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
                     onPress={() => handleViewRoute(route)}
                   >
-                    <Ionicons name="map" size="16" color="#6B46C1" />
+                    <Ionicons name="map" size={16} color={iconColor} />
                     <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity
-                    className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg"
-                    onPress={() => setShowCheckInModal(true)}
-                  >
+                                     <TouchableOpacity
+                     className="flex-1 flex-row items-center justify-center py-2 ml-2 bg-cnmi-primary rounded-lg"
+                     onPress={() => {
+                       setCheckedInRoute(route);
+                       setShowCheckInModal(true);
+                     }}
+                   >
                     <Ionicons name="checkmark-circle" size={16} color="white" />
                     <Text className="text-white font-medium ml-2">Check In</Text>
                   </TouchableOpacity>
@@ -251,20 +255,26 @@ export default function RoutesScreen() {
         </View>
 
         {/* Floating Action Button */}
-        <TouchableOpacity
-          className="absolute bottom-6 right-6 w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
-          onPress={() => setShowCheckInModal(true)}
-        >
+                 <TouchableOpacity
+           className="absolute bottom-6 right-6 w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
+           onPress={() => {
+             setCheckedInRoute(routes[0]); // Default to first route for FAB
+             setShowCheckInModal(true);
+           }}
+         >
           <Ionicons name="add" size={28} color="white" />
         </TouchableOpacity>
 
         {/* Check-in Confirmation Modal */}
-        <Modal
-          visible={showCheckInModal}
-          transparent={true}
-          animationType="slide"
-          onRequestClose={() => setShowCheckInModal(false)}
-        >
+                 <Modal
+           visible={showCheckInModal}
+           transparent={true}
+           animationType="slide"
+           onRequestClose={() => {
+             setShowCheckInModal(false);
+             setCheckedInRoute(null);
+           }}
+         >
           <BlurView 
             intensity={80} 
             tint={theme === 'dark' ? 'dark' : 'light'} 
@@ -287,56 +297,66 @@ export default function RoutesScreen() {
                 </Text>
               </View>
 
-              {/* Route Info Card */}
-              <View className="bg-background-50 dark:bg-background-100 rounded-2xl p-4 mb-6 border border-outline-200 dark:border-outline-700">
-                <View className="flex-row items-center">
-                  <View className="w-14 h-14 rounded-lg items-center justify-center mr-4" style={{ backgroundColor: '#6B46C1' }}>
-                    <Text className="text-white font-bold text-lg">16</Text>
-                  </View>
-                  
-                  <View className="flex-1">
-                    <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-1">
-                      Route 16 Northbound
-                    </Text>
-                    <Text className="text-sm text-typography-600 dark:text-typography-400 mb-1">
-                      Garapan → Airport → Susupe
-                    </Text>
-                    <View className="flex-row items-center">
-                      <Ionicons name="time" size={14} color="#6B46C1" />
-                      <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
-                        Next arrival: 2 min
-                      </Text>
-                    </View>
-                  </View>
-                  
-                  <View className="items-end">
-                    <View className="px-2 py-1 rounded-full bg-green-100 dark:bg-green-900">
-                      <Text className="text-xs font-medium text-green-800 dark:text-green-200">
-                        On Time
-                      </Text>
-                    </View>
-                  </View>
-                </View>
-              </View>
+                             {/* Route Info Card */}
+               {checkedInRoute && (
+                 <View className="bg-background-50 dark:bg-background-100 rounded-2xl p-4 mb-6 border border-outline-200 dark:border-outline-700">
+                   <View className="flex-row items-center">
+                     <View 
+                       className="w-14 h-14 rounded-lg items-center justify-center mr-4"
+                       style={{ backgroundColor: checkedInRoute.color }}
+                     >
+                       <Text className="text-white font-bold text-lg">{checkedInRoute.id}</Text>
+                     </View>
+                     
+                     <View className="flex-1">
+                       <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900 mb-1">
+                         {checkedInRoute.name}
+                       </Text>
+                       <Text className="text-sm text-typography-600 dark:text-typography-400 mb-1">
+                         {checkedInRoute.description}
+                       </Text>
+                       <View className="flex-row items-center">
+                         <Ionicons name="time" size={14} color={iconColor} />
+                         <Text className="text-sm ml-1 text-typography-500 dark:text-typography-400">
+                           Next arrival: {checkedInRoute.nextArrival}
+                         </Text>
+                       </View>
+                     </View>
+                     
+                     <View className="items-end">
+                       <View className={`px-2 py-1 rounded-full ${checkedInRoute.status === 'On Time' ? 'bg-green-100 dark:bg-green-900' : 'bg-yellow-100 dark:bg-yellow-900'}`}>
+                         <Text className={`text-xs font-medium ${checkedInRoute.status === 'On Time' ? 'text-green-800 dark:text-green-200' : 'text-yellow-800 dark:text-yellow-200'}`}>
+                           {checkedInRoute.status}
+                         </Text>
+                       </View>
+                     </View>
+                   </View>
+                 </View>
+               )}
 
               {/* Action Buttons */}
               <View>
-                <TouchableOpacity 
-                  className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
-                  onPress={() => {
-                    setShowCheckInModal(false);
-                    handleViewRoute();
-                  }}
-                  style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
-                >
+                                 <TouchableOpacity 
+                   className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
+                   onPress={() => {
+                     setShowCheckInModal(false);
+                     if (checkedInRoute) {
+                       handleViewRoute(checkedInRoute);
+                     }
+                   }}
+                   style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
+                 >
                   <Text className="text-white font-semibold text-lg mr-2">View on Map</Text>
                   <Ionicons name="arrow-forward" size={20} color="white" />
                 </TouchableOpacity>
                 
-                <TouchableOpacity 
-                  className="bg-background-100 dark:bg-background-200 rounded-2xl py-4 px-6 border border-outline-200 dark:border-outline-700"
-                  onPress={() => setShowCheckInModal(false)}
-                >
+                                 <TouchableOpacity 
+                   className="bg-background-100 dark:bg-background-200 rounded-2xl py-4 px-6 border border-outline-200 dark:border-outline-700"
+                   onPress={() => {
+                     setShowCheckInModal(false);
+                     setCheckedInRoute(null);
+                   }}
+                 >
                   <Text className="text-typography-700 dark:text-typography-300 font-medium text-center text-lg">
                     Stay Here
                   </Text>
@@ -344,13 +364,14 @@ export default function RoutesScreen() {
               </View>
 
               {/* Cancel Option */}
-              <TouchableOpacity 
-                className="mt-4 py-2"
-                onPress={() => {
-                  setShowCheckInModal(false);
-                  // You can add cancel check-in logic here
-                }}
-              >
+                             <TouchableOpacity 
+                 className="mt-4 py-2"
+                 onPress={() => {
+                   setShowCheckInModal(false);
+                   setCheckedInRoute(null);
+                   // You can add cancel check-in logic here
+                 }}
+               >
                 <Text className="text-center text-sm text-typography-500 dark:text-typography-400 underline">
                   Cancel check-in
                 </Text>

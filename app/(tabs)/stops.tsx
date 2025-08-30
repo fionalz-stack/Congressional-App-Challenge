@@ -11,11 +11,12 @@ export default function StopsScreen() {
   const { theme } = useTheme();
   const [selectedStop, setSelectedStop] = useState<string | null>(null);
   
-  // Get route information from navigation params
+  // Get route information and user role from navigation params
   const params = useLocalSearchParams();
   const routeId = params.routeId as string || '16';
   const routeName = params.routeName as string || 'Route 16 Northbound';
   const routeDescription = params.routeDescription as string || 'Garapan → Airport → Susupe';
+  const isDriver = params.role === 'driver';
 
   // Mock bus stops data - in a real app, this would come from the route selection
   const busStops = [
@@ -55,6 +56,11 @@ export default function StopsScreen() {
 
   const handleStopPress = (stopId: string) => {
     setSelectedStop(stopId);
+    
+    // If user is not a driver, navigate back to routes
+    if (!isDriver) {
+      router.push('/routes');
+    }
   };
 
   const handleStartRoute = () => {
@@ -69,8 +75,6 @@ export default function StopsScreen() {
       }
     });
   };
-
-
 
   const getStatusColor = (status: string) => {
     if (status === 'active') return 'bg-green-100 dark:bg-green-900';
@@ -87,6 +91,114 @@ export default function StopsScreen() {
     return 'Upcoming';
   };
 
+  // If user is not a driver, show a different view
+  if (!isDriver) {
+    return (
+      <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
+        <View className="flex-1 bg-background-50 dark:bg-background-0">
+          {/* Header */}
+          <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+            <View className="flex-row items-center">
+              <TouchableOpacity 
+                onPress={() => router.back()}
+                className="mr-3 p-1"
+              >
+                <Ionicons 
+                  name="arrow-back" 
+                  size={24} 
+                  color={theme === 'dark' ? '#FFFFFF' : '#6B7280'} 
+                />
+              </TouchableOpacity>
+              <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
+                Bus Stops
+              </Text>
+            </View>
+            <Text className="text-sm text-typography-600 dark:text-typography-400 mt-1">
+              {routeName}
+            </Text>
+          </View>
+
+          {/* Route Status Bar */}
+          <View className="px-4 py-2 bg-cnmi-light border-b border-outline-200 dark:border-outline-700">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <View className="w-2 h-2 bg-green-500 rounded-full mr-2"></View>
+                <Text className="text-sm font-medium text-cnmi-primary">
+                  Route Active
+                </Text>
+              </View>
+              <View className="flex-row items-center">
+                <Ionicons name="time" size={16} color="#6B46C1" />
+                <Text className="text-sm text-cnmi-primary ml-1 font-medium">
+                  Next Stop: 8:00 AM
+                </Text>
+              </View>
+            </View>
+          </View>
+
+          {/* Stops List - Simplified for regular users */}
+          <View className="flex-1">
+            <ScrollView className="px-4 py-4 bg-background-50 dark:bg-background-0">
+              {busStops.map((stop, index) => (
+                <CNMICard 
+                  key={stop.id} 
+                  variant="elevated" 
+                  className={`mb-4 ${selectedStop === stop.id ? 'ring-2 ring-cnmi-primary' : ''}`}
+                >
+                  <TouchableOpacity onPress={() => handleStopPress(stop.id)}>
+                    <View className="flex-row items-start">
+                      {/* Stop Number */}
+                      <View className="w-12 h-12 rounded-full bg-cnmi-light items-center justify-center mr-4">
+                        <Text className="text-cnmi-primary font-bold text-lg">{index + 1}</Text>
+                      </View>
+
+                      {/* Stop Info */}
+                      <View className="flex-1">
+                        <View className="flex-row items-center justify-between mb-1">
+                          <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
+                            {stop.name}
+                          </Text>
+                          <View className={`px-3 py-1 rounded-full ${getStatusColor(stop.status)}`}>
+                            <Text className={`text-xs font-medium ${getStatusTextColor(stop.status)}`}>
+                              {getStatusText(stop.status)}
+                            </Text>
+                          </View>
+                        </View>
+
+                        <Text className="text-typography-600 dark:text-typography-400 mb-2">
+                          {stop.description}
+                        </Text>
+
+                        <View className="flex-row items-center">
+                          <Ionicons 
+                            name="time" 
+                            size={16} 
+                            color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} 
+                          />
+                          <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
+                            {stop.time}
+                          </Text>
+                        </View>
+                      </View>
+                    </View>
+                  </TouchableOpacity>
+                </CNMICard>
+              ))}
+            </ScrollView>
+          </View>
+
+          {/* Info for regular users */}
+          <View className="px-4 py-3 border-t border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+            <Text className="text-sm text-typography-600 dark:text-typography-400 text-center">
+              Tap on a stop to see more details. This view shows the current route schedule.
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  // Driver view - show all functionality
   return (
     <SafeAreaView className="flex-1 bg-background-50 dark:bg-background-0">
       <View className="flex-1 bg-background-50 dark:bg-background-0">
