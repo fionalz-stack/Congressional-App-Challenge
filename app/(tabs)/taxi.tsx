@@ -103,6 +103,25 @@ export default function TaxiScreen() {
         </View>
 
         <ScrollView className="flex-1 bg-background-50 dark:bg-background-0">
+          {/* CARS/Paratransit Notice */}
+          <CNMICard variant="outlined" className="m-4 border-cnmi-primary/30">
+            <View className="flex-row items-start">
+              <View className="w-10 h-10 bg-cnmi-primary/10 rounded-full items-center justify-center mr-3">
+                <Ionicons name="car" size={20} color="#6B46C1" />
+              </View>
+              <View className="flex-1">
+                <Text className="font-semibold text-typography-900 dark:text-typography-900 mb-1">CARS/Paratransit Service</Text>
+                <Text className="text-sm text-typography-600 dark:text-typography-400 mb-2">
+                  Accessible transportation requires advance reservation. Book your trip at least 2 days in advance.
+                </Text>
+                <View className="flex-row items-center">
+                  <Ionicons name="call" size={16} color="#6B46C1" />
+                  <Text className="text-cnmi-primary font-medium ml-2 text-sm">(670) 664-4287</Text>
+                </View>
+              </View>
+            </View>
+          </CNMICard>
+
           {/* Location Input */}
           <CNMICard variant="elevated" className="m-4">
   <View className="space-y-4">
