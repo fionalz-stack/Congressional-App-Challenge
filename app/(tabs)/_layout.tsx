@@ -67,7 +67,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="location" size={size} color={color} />
           ),
-          href: isDriver ? null : undefined, // Hide for drivers
+          href: null, // Hide for all users - stops will be accessed via routes
         }}
       />
       
@@ -90,6 +90,17 @@ export default function TabLayout() {
             <Ionicons name="bus" size={size} color={color} />
           ),
           href: isDriver ? undefined : null, // Hide for users
+        }}
+      />
+      
+      <Tabs.Screen
+        name="driverStops"
+        options={{
+          title: 'Driver Stops',
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="location" size={size} color={color} />
+          ),
+          href: null, // Hide for all users - accessed via driverRoute
         }}
       />
       

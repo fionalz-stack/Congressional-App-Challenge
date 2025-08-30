@@ -6,7 +6,7 @@ import { useState } from 'react';
 import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function StopsScreen() {
+export default function DriverStopsScreen() {
   const router = useRouter();
   const { theme } = useTheme();
   const [selectedStop, setSelectedStop] = useState<string | null>(null);
@@ -57,7 +57,18 @@ export default function StopsScreen() {
     setSelectedStop(stopId);
   };
 
-
+  const handleStartRoute = () => {
+    // Navigate to map view with route information
+    router.push({
+      pathname: '/map',
+      params: { 
+        routeId,
+        routeName,
+        routeDescription,
+        mode: 'driver'
+      }
+    });
+  };
 
   const getStatusColor = (status: string) => {
     if (status === 'active') return 'bg-green-100 dark:bg-green-900';
@@ -81,7 +92,7 @@ export default function StopsScreen() {
         <View className="px-4 py-3 border-b border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
           <View className="flex-row items-center">
             <TouchableOpacity 
-              onPress={() => router.push('/routes')}
+              onPress={() => router.push('/driverRoute')}
               className="mr-3 p-1"
             >
               <Ionicons 
@@ -90,7 +101,7 @@ export default function StopsScreen() {
                 color={theme === 'dark' ? '#FFFFFF' : '#6B7280'} 
               />
             </TouchableOpacity>
-            <Text className="text-lg font-bold text-typography-900 dark:text-typography-900">
+            <Text className="text-xl font-bold text-typography-900 dark:text-typography-900">
               Bus Stops
             </Text>
           </View>
@@ -117,7 +128,7 @@ export default function StopsScreen() {
           </View>
         </View>
 
-        {/* Stops List - Simplified for regular users */}
+        {/* Stops List */}
         <View className="flex-1">
           <ScrollView className="px-4 py-4 bg-background-50 dark:bg-background-0">
             {busStops.map((stop, index) => (
@@ -150,15 +161,27 @@ export default function StopsScreen() {
                         {stop.description}
                       </Text>
 
-                      <View className="flex-row items-center">
-                        <Ionicons 
-                          name="time" 
-                          size={16} 
-                          color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} 
-                        />
-                        <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
-                          {stop.time}
-                        </Text>
+                      <View className="flex-row items-center justify-between">
+                        <View className="flex-row items-center">
+                          <Ionicons 
+                            name="time" 
+                            size={16} 
+                            color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} 
+                          />
+                          <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
+                            {stop.time}
+                          </Text>
+                        </View>
+                        <View className="flex-row items-center">
+                          <Ionicons 
+                            name="people" 
+                            size={16} 
+                            color={theme === 'dark' ? '#9CA3AF' : '#6B7280'} 
+                          />
+                          <Text className="text-sm text-typography-600 dark:text-typography-400 ml-1">
+                            <Text className="text-lg font-bold text-cnmi-primary">{stop.checkedIn}</Text> checked in
+                          </Text>
+                        </View>
                       </View>
                     </View>
                   </View>
@@ -168,13 +191,35 @@ export default function StopsScreen() {
           </ScrollView>
         </View>
 
-        {/* Info for regular users */}
+        {/* Passenger Summary */}
         <View className="px-4 py-3 border-t border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
-          <Text className="text-sm text-typography-600 dark:text-typography-400 text-center">
-            Tap on a stop to see more details. This view shows the current route schedule.
+          <View className="flex-row items-center justify-between mb-3">
+            <Text className="text-lg font-semibold text-typography-900 dark:text-typography-900">
+              Passenger Summary
+            </Text>
+            <View className="bg-cnmi-primary rounded-full px-3 py-1">
+              <Text className="text-white font-bold text-lg">
+                {busStops.reduce((total, stop) => total + stop.checkedIn, 0)}
+              </Text>
+            </View>
+          </View>
+          <Text className="text-sm text-typography-600 dark:text-typography-400">
+            Total passengers checked in across all stops
           </Text>
+        </View>
+
+        {/* Action Bar */}
+        <View className="px-4 py-4 border-t border-outline-200 dark:border-outline-700 bg-background-0 dark:bg-background-50">
+          <TouchableOpacity 
+            className="bg-cnmi-primary rounded-full py-3 px-6"
+            onPress={handleStartRoute}
+          >
+            <Text className="text-white font-semibold text-center text-lg">
+              Start Route
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </SafeAreaView>
   );
-}
+}    

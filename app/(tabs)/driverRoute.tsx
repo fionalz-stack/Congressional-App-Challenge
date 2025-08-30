@@ -63,9 +63,9 @@ export default function RoutesScreen() {
 
   const handleConfirmRoute = () => {
     setShowRouteConfirmation(false);
-    // Navigate to stops screen with route info
+    // Navigate to driver stops screen with route info
     router.push({
-      pathname: '/stops',
+      pathname: '/driverStops',
       params: { 
         routeId: selectedRoute.id,
         routeName: selectedRoute.name,

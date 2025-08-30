@@ -233,7 +233,7 @@ export default function RoutesScreen() {
                     className="flex-1 flex-row items-center justify-center py-2 mr-2 bg-cnmi-light rounded-lg"
                     onPress={() => handleViewRoute(route)}
                   >
-                    <Ionicons name="map" size="16" color="#6B46C1" />
+                    <Ionicons name="map" size={16} color="#6B46C1" />
                     <Text className="text-cnmi-primary font-medium ml-2">View Route</Text>
                   </TouchableOpacity>
                   <TouchableOpacity
@@ -250,13 +250,7 @@ export default function RoutesScreen() {
           </ScrollView>
         </View>
 
-        {/* Floating Action Button */}
-        <TouchableOpacity
-          className="absolute bottom-6 right-6 w-14 h-14 bg-cnmi-primary rounded-full items-center justify-center shadow-lg"
-          onPress={() => setShowCheckInModal(true)}
-        >
-          <Ionicons name="add" size={28} color="white" />
-        </TouchableOpacity>
+
 
         {/* Check-in Confirmation Modal */}
         <Modal
@@ -325,7 +319,8 @@ export default function RoutesScreen() {
                   className="bg-cnmi-primary rounded-2xl py-4 px-6 flex-row items-center justify-center mb-3"
                   onPress={() => {
                     setShowCheckInModal(false);
-                    handleViewRoute();
+                    // Navigate to map screen instead since we don't have a specific route context here
+                    router.push('/map');
                   }}
                   style={{ shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.05, shadowRadius: 4 }}
                 >
