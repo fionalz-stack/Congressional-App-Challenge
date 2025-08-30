@@ -110,7 +110,7 @@ export default function TaxiScreen() {
                 <Ionicons name="car" size={20} color="#6B46C1" />
               </View>
               <View className="flex-1">
-                <Text className="font-semibold text-typography-900 dark:text-typography-900 mb-1">CARS/Paratransit Service</Text>
+                <Text className="font-semibold text-typography-900 dark:text-typography-900 mb-1">Cars/Paratransit Service</Text>
                 <Text className="text-sm text-typography-600 dark:text-typography-400 mb-2">
                   Accessible transportation requires advance reservation. Book your trip at least 2 days in advance.
                 </Text>
